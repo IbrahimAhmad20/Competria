@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>admindashboard</class>
+ <widget class="QDialog" name="admindashboard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1032</width>
+    <height>438</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Admin Dashboard</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image : url(&quot;:/new/prefix1/src/percut_generated.jpg&quot;) ;</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="overviewLabel">
+       <property name="font">
+        <font>
+         <strikeout>false</strikeout>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background : transparent ;</string>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:700;&quot;&gt;Admin Dashboard&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="problemManagerButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>10</horstretch>
+           <verstretch>10</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
+    border-radius: 15px; /* Rounded corners */
+    font-size: 16px; /* Text size */
+    padding: 8px 16px; /* Padding inside the button */
+ background-color: #17A398; /* Teal background for Submit */
+    color: #FFFFFF; /* White text for Submit */
+    border: none; /* Remove border */</string>
+         </property>
+         <property name="text">
+          <string>Manage Problems</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="submissionMonitorButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>10</horstretch>
+           <verstretch>10</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
+    border-radius: 15px; /* Rounded corners */
+    font-size: 16px; /* Text size */
+    padding: 8px 16px; /* Padding inside the button */
+ background-color: #17A398; /* Teal background for Submit */
+    color: #FFFFFF; /* White text for Submit */
+    border: none; /* Remove border */</string>
+         </property>
+         <property name="text">
+          <string>Monitor Submissions</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="userManagerButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>10</horstretch>
+           <verstretch>10</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
+    border-radius: 15px; /* Rounded corners */
+    font-size: 16px; /* Text size */
+    padding: 8px 16px; /* Padding inside the button */
+ background-color: #17A398; /* Teal background for Submit */
+    color: #FFFFFF; /* White text for Submit */
+    border: none; /* Remove border */</string>
+         </property>
+         <property name="text">
+          <string>Manage Users</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

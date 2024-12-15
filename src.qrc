@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>add_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/delete_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/edit_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/arrow_menu_open_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/account_circle_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/login_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/manage_accounts_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/password_2_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/person_edit_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/person_28dp_E5EFC1_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/password_28dp_E5EFC1_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/shield_person_28dp_A2D5AB_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/percut_generated.jpg</file>
+        <file>src/delete_28dp_6B2346_FILL0_wght400_GRAD0_opsz24.png</file>
+        <file>src/mail_30dp_6B2346_FILL0_wght400_GRAD0_opsz24.png</file>
+    </qresource>
+</RCC>
