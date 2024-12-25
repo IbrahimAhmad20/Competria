@@ -18,7 +18,6 @@ public:
 
 private slots:
     void on_createButton_clicked();
-    void on_viewButton_clicked();
     void on_deleteButton_clicked();
     void on_editButton_clicked();
     void populateTable();
@@ -27,4 +26,4 @@ private:
     Ui::problemManager *ui;
 };
 
-#endif // PROBLEMMANAGER_H
+#endif

@@ -38,9 +38,9 @@ void adminlogin::on_admin_login_button_clicked()
     if (db.validateAdmin(adminUsername, adminPassword))
     {
         QMessageBox::information(this, "Success", "Admin login successful.");
-        // Navigate to the admin dashboard or main menu
+
         admindashboard adminDashboard(this);
-        adminDashboard.exec(); // Opens the admin login dialog
+        adminDashboard.exec();
     } else {
         QMessageBox::critical(this, "Error", "Invalid admin credentials.");
     }

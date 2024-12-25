@@ -18,13 +18,13 @@ MainWindow::~MainWindow() {
 void MainWindow::on_admininterfacebutton_clicked()
 {
     adminlogin adminLoginDialog(this);
-    adminLoginDialog.exec(); // Opens the admin login dialog
+    adminLoginDialog.exec();
 }
 
 void MainWindow::on_userinterfacebutton_clicked()
 {
     userlogin userLoginDialog(this);
-    userLoginDialog.exec(); // Opens the user login dialog
+    userLoginDialog.exec();
 }
 
 

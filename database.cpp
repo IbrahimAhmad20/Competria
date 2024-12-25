@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QCryptographicHash>
+#include "sessionmanager.h"
 
 Database::Database()
 {
@@ -13,38 +14,23 @@ Database::~Database()
 {
     if (db.isOpen())
     {
-        db.close(); // Close the database connection on destruction
-    }
-}
-
-/*bool Database::connect()
-{
-    QString connectionString = QString(
-        "DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};"
-        "DBQ=C:\\Users\\muhammed\\Documents\\Database1.accdb;"
-        );
-
-    db.setDatabaseName(connectionString);
-
-    if (!db.open())
-    {
-        qDebug() << "Database connection failed:" << db.lastError().text();
-        return false;
+        db.close();
     }
 
-    qDebug() << "Database connected successfully.";
-    return true;
 }
-*/
+
+
 bool Database::connect()
 {
-    // Check for existing connection
-    if (QSqlDatabase::contains("qt_sql_default_connection")) {
+
+    if (QSqlDatabase::contains("qt_sql_default_connection"))
+    {
         db = QSqlDatabase::database("qt_sql_default_connection");
         if (db.isOpen()) {
-            return true; // Use existing open connection
+            return true;
         }
-    } else {
+    } else
+    {
         db = QSqlDatabase::addDatabase("QODBC", "qt_sql_default_connection");
     }
 
@@ -63,72 +49,29 @@ bool Database::connect()
     qDebug() << "Database connected successfully.";
     return true;
 }
+QSqlDatabase Database::getDatabase() const
+{
+    return db;
+}
 QString Database::hashPassword(const QString &password)
 {
     return QString(QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256).toHex());
 }
-/*bool Database::createUser(const QString &email, const QString &username, const QString &password) {
-    if (!db.isOpen()) return false;
 
-    QSqlQuery query(db);
-    query.prepare("INSERT INTO Users (Email, Username, Password) VALUES (?, ?, ?)");
-    query.addBindValue(email);
-    query.addBindValue(username);
-    query.addBindValue(password);
-
-    if (!query.exec()) {
-        qDebug() << "Insert user failed:" << query.lastError().text();
-        return false;
-    }
-
-    return true;
-}
-
-bool Database::validateUser(const QString &username, const QString &password) {
-    if (!db.isOpen()) return false;
-
-    QSqlQuery query(db);
-    query.prepare("SELECT * FROM Users WHERE Username = ? AND Password = ?");
-    query.addBindValue(username);
-    query.addBindValue(password);
-
-    if (!query.exec()) {
-        qDebug() << "Validation query failed:" << query.lastError().text();
-        return false;
-    }
-
-    return query.next(); // Returns true if a matching record is found
-}
-
-bool Database::validateAdmin(const QString &adminUsername, const QString &adminPassword) {
-    if (!db.isOpen()) return false;
-
-    QSqlQuery query(db);
-    query.prepare("SELECT * FROM Admins WHERE Username = ? AND Password = ?");
-    query.addBindValue(adminUsername);
-    query.addBindValue(adminPassword);
-
-    if (!query.exec()) {
-        qDebug() << "Admin validation query failed:" << query.lastError().text();
-        return false;
-    }
-
-    return query.next(); // Returns true if a matching admin record is found
-}
-*/
 bool Database::createUser(const QString &email, const QString &username, const QString &password)
 {
     if (!db.isOpen()) return false;
 
-    QString hashedPassword = hashPassword(password);
+    QString Password = hashPassword(password);
 
     QSqlQuery query(db);
     query.prepare("INSERT INTO Users (Email, Username, Password) VALUES (?, ?, ?)");
     query.addBindValue(email);
     query.addBindValue(username);
-    query.addBindValue(hashedPassword);
+    query.addBindValue(Password);
 
-    if (!query.exec()) {
+    if (!query.exec())
+    {
         qDebug() << "Insert user failed:" << query.lastError().text();
         return false;
     }
@@ -136,7 +79,7 @@ bool Database::createUser(const QString &email, const QString &username, const Q
     return true;
 }
 
-bool Database::validateUser(const QString &username, const QString &password)
+/*bool Database::validateUser(const QString &username, const QString &password)
 {
     if (!db.isOpen()) return false;
 
@@ -147,12 +90,37 @@ bool Database::validateUser(const QString &username, const QString &password)
     query.addBindValue(username);
     query.addBindValue(hashedPassword);
 
+    if (!query.exec())
+    {
+        qDebug() << "Validation query failed:" << query.lastError().text();
+        return false;
+    }
+
+    return query.next();
+}
+*/
+bool Database::validateUser(const QString &username, const QString &password) {
+    if (!db.isOpen()) return false;
+
+    QString hashedPassword = hashPassword(password);
+
+    QSqlQuery query(db);
+    query.prepare("SELECT ID FROM Users WHERE Username = ? AND Password = ?");
+    query.addBindValue(username);
+    query.addBindValue(hashedPassword);
+
     if (!query.exec()) {
         qDebug() << "Validation query failed:" << query.lastError().text();
         return false;
     }
 
-    return query.next(); // Returns true if a matching record is found
+    if (query.next()) {
+        int userId = query.value("ID").toInt();
+        sessionManager::instance().setLoggedInUser(userId, username); // Set session data
+        return true;
+    }
+
+    return false;
 }
 
 bool Database::validateAdmin(const QString &adminUsername, const QString &adminPassword)
@@ -167,136 +135,52 @@ bool Database::validateAdmin(const QString &adminUsername, const QString &adminP
     query.addBindValue(hashedPassword);
 
     if (!query.exec())
+
+
+
+
+
     {
         qDebug() << "Admin validation query failed:" << query.lastError().text();
         return false;
     }
 
-    return query.next(); // Returns true if a matching admin record is found
+    return query.next();
 }
-/*bool Database::createProblem(const QString &title, const QString &description) {
+
+bool Database::createProblem(const QString &title, const QString &description,
+                             const QString &inputFormat, const QString &outputFormat,
+                             const QString &constraints, const QString &example,
+                             const QString &topic)
+{
     if (!db.isOpen()) return false;
 
     QSqlQuery query(db);
-    query.prepare("INSERT INTO Problems (Title, Description) VALUES (?, ?)");
-    query.addBindValue(title);
-    query.addBindValue(description);
-
-    if (!query.exec()) {
-        qDebug() << "Create problem failed:" << query.lastError().text();
-        return false;
-    }
-
-    return true;
-} */
-bool Database::createProblem(QString title, QString description, QString inputFormat, QString outputFormat, QString constraints, QString example, QList<int> topicIDs)
-{
-    if (!db.isOpen()) {
-        qDebug() << "Database is not open.";
-        return false;
-    }
-
-    QSqlQuery query(db);
-
-    // Step 1: Insert the problem into the Problems table
-    query.prepare("INSERT INTO Problems (Title, Description, Input_Format, Output_Format, Constraints, Example) "
-                  "VALUES (:title, :description, :inputFormat, :outputFormat, :constraints, :example)");
+    query.prepare("INSERT INTO Problems (Title, Description, Input_Format, Output_Format, Constraints, Example, Topic) "
+                  "VALUES (:title, :description, :inputFormat, :outputFormat, :constraints, :example, :topic)");
     query.bindValue(":title", title);
     query.bindValue(":description", description);
     query.bindValue(":inputFormat", inputFormat);
     query.bindValue(":outputFormat", outputFormat);
     query.bindValue(":constraints", constraints);
     query.bindValue(":example", example);
+    query.bindValue(":topic", topic);
 
     if (!query.exec()) {
-        qDebug() << "Failed to insert problem:" << query.lastError().text();
+        qDebug() << "Insert problem failed:" << query.lastError().text();
         return false;
     }
+    qDebug() << "Creating problem with:" << title << description << inputFormat << outputFormat << constraints << example << topic;
 
-    int problemID = query.lastInsertId().toInt(); // Retrieve the newly inserted Problem ID
-
-    // Step 2: Link the problem to multiple topic IDs
-    for (int topicID : topicIDs) {
-        QSqlQuery linkQuery(db);
-        linkQuery.prepare("INSERT INTO ProblemTopics (Problem_ID, Topic_ID) VALUES (:problemID, :topicID)");
-        linkQuery.bindValue(":problemID", problemID);
-        linkQuery.bindValue(":topicID", topicID);
-
-        if (!linkQuery.exec()) {
-            qDebug() << "Failed to link problem with topic ID:" << topicID << "-" << linkQuery.lastError().text();
-            return false; // Handle failure (optional: continue instead of returning)
-        }
-    }
-
-    qDebug() << "Problem created successfully and linked to topics.";
     return true;
 }
 
-int Database::getTopicIDByName(const QString &topicName)
-{
-    if (!db.isOpen()) {
-        qDebug() << "Database is not open.";
-        return -1;
-    }
 
-    QSqlQuery query(db);
-    query.prepare("SELECT ID FROM Topics WHERE Topic_Name = :name");
-    query.bindValue(":name", topicName);
-
-    if (query.exec() && query.next()) {
-        return query.value(0).toInt(); // Return the ID if found
-    } else {
-        qDebug() << "Topic not found:" << topicName << query.lastError().text();
-        return -1; // Return -1 if not found
-    }
-}
-
-/*QSqlQuery Database::getAllProblems()
-{
-    if (!db.isOpen())
-    {
-        qDebug() << "Database is not open.";
-        return QSqlQuery(); // Return an empty query
-    }
-
-    QSqlQuery query(db);
-    query.prepare("SELECT * FROM Problems");
-
-    if (!query.exec())
-    {
-        qDebug() << "Failed to fetch problems:" << query.lastError().text();
-    }
-
-    return query;
-}*/
-/*QSqlQuery Database::getAllProblems()
-{
-    if (!db.isOpen())
-    {
-        qDebug() << "Database is not open.";
-        return QSqlQuery(); // Return an empty query
-    }
-
-    QSqlQuery query(db);
-    query.prepare("SELECT Problems.*, GROUP_CONCAT(Topics.Topic_Name) AS Topics "
-                  "FROM Problems "
-                  "LEFT JOIN ProblemTopics ON Problems.ID = ProblemTopics.Problem_ID "
-                  "LEFT JOIN Topics ON ProblemTopics.Topic_ID = Topics.ID "
-                  "GROUP BY Problems.ID, Problems.Title, Problems.Description, Problems.Input_Format, "
-                  "Problems.Output_Format, Problems.Constraints, Problems.Example");
-
-    if (!query.exec())
-    {
-        qDebug() << "Failed to fetch problems:" << query.lastError().text();
-    }
-
-    return query;
-}*/
 QSqlQuery Database::getAllProblems()
 {
     if (!db.isOpen()) {
         qDebug() << "Database is not open.";
-        return QSqlQuery(); // Return an empty query
+        return QSqlQuery();
     }
 
     QSqlQuery query(db);
@@ -304,22 +188,32 @@ QSqlQuery Database::getAllProblems()
 
     if (!query.exec()) {
         qDebug() << "Failed to fetch problems:" << query.lastError().text();
-        return QSqlQuery(); // Return an empty query if execution fails
+        return QSqlQuery();
     }
 
-    return query; // Return the executed query
+    return query;
 }
 
 
 
-/*bool Database::updateProblem(int id, const QString &title, const QString &description)
+
+bool Database::updateProblem(int id, const QString &title, const QString &description,
+                             const QString &inputFormat, const QString &outputFormat,
+                             const QString &constraints, const QString &example,
+                             const QString &topic)
 {
     if (!db.isOpen()) return false;
 
     QSqlQuery query(db);
-    query.prepare("UPDATE Problems SET Title = ?, Description = ? WHERE ID = ?");
+    query.prepare("UPDATE Problems SET Title = ?, Description = ?, Input_Format = ?, "
+                  "Output_Format = ?, Constraints = ?, Example = ?, Topic = ? WHERE ID = ?");
     query.addBindValue(title);
     query.addBindValue(description);
+    query.addBindValue(inputFormat);
+    query.addBindValue(outputFormat);
+    query.addBindValue(constraints);
+    query.addBindValue(example);
+    query.addBindValue(topic);
     query.addBindValue(id);
 
     if (!query.exec()) {
@@ -328,30 +222,8 @@ QSqlQuery Database::getAllProblems()
     }
 
     return true;
-}*/
-bool Database::updateProblem(int id, const QString &title, const QString &description, const QString &inputFormat,
-                             const QString &outputFormat, const QString &constraints, const QString &example) {
-    if (!db.isOpen()) return false;
-
-    QSqlQuery query(db);
-    query.prepare("UPDATE Problems SET Title = ?, Description = ?, Input_Format = ?, Output_Format = ?, "
-                  "Constraints = ?, Example = ? WHERE ID = ?");
-    query.addBindValue(title);
-    query.addBindValue(description);
-    query.addBindValue(inputFormat);
-    query.addBindValue(outputFormat);
-    query.addBindValue(constraints);
-    query.addBindValue(example);
-    query.addBindValue(id);
-
-    if (!query.exec())
-    {
-        qDebug() << "Update problem failed:" << query.lastError().text();
-        return false;
-    }
-
-    return true;
 }
+
 
 bool Database::deleteProblem(int id)
 {
@@ -413,3 +285,27 @@ bool Database::updateUser(int id, const QString &email, const QString &username,
     return true;
 }
 
+bool Database::saveSubmission(int userId, int problemId, const QString &code)
+{
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO Submissions (Users_Id, Problem_Id, Submission_Time, Code) "
+                  "VALUES (:userId, :problemId, :submissionTime, :code)");
+    query.bindValue(":userId", userId);
+    query.bindValue(":problemId", problemId);
+    query.bindValue(":submissionTime", QDateTime::currentDateTime());
+    query.bindValue(":code", code);
+
+    return query.exec();
+}
+bool Database::saveResult(int submissionId, const QString &status, double runtime, double memoryUsed)
+{
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO Results (Submission_Id, Status, Runtime, Memory_Used) "
+                  "VALUES (:submissionId, :status, :runtime, :memoryUsed)");
+    query.bindValue(":submissionId", submissionId);
+    query.bindValue(":status", status);
+    query.bindValue(":runtime", runtime);
+    query.bindValue(":memoryUsed", memoryUsed);
+
+    return query.exec();
+}

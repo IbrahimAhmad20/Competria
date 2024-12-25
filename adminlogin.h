@@ -23,4 +23,4 @@ private:
     Ui::adminlogin *ui;
 };
 
-#endif // ADMINLOGIN_H
+#endif

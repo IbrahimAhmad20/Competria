@@ -3,6 +3,8 @@
 #include "database.h"
 #include <QMessageBox>
 #include "createuser.h"
+#include "userdashboard.h"
+#include "ui_userdashboard.h"
 
 userlogin::userlogin(QWidget *parent) : QDialog(parent), ui(new Ui::userlogin)
 {
@@ -28,19 +30,17 @@ void userlogin::on_login_button_clicked()
 
     if (db.validateUser(username, password))
     {
-        QMessageBox::information(this, "Success", "User login successful.");
-        // Navigate to the user dashboard or main menu
-    } else {
+        userdashboard *userdashboardDialog = new userdashboard(this);
+        this->close();
+        userdashboardDialog->exec();
+    }
+    else
+    {
         QMessageBox::critical(this, "Error", "Invalid user credentials.");
-
-
-
-
-
     }
 }
 void userlogin::on_signup_button_clicked()
 {
     createuser createUserDialog(this);
-    createUserDialog.exec(); // Opens the create user dialog
+    createUserDialog.exec();
 }

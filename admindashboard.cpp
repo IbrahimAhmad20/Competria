@@ -1,11 +1,11 @@
 #include "admindashboard.h"
 #include "ui_admindashboard.h"
-#include <QMessageBox> // For potential notifications
+#include <QMessageBox>
 #include "problemmanager.h"
 #include "usermanager.h"
-#include <QPixmap>// Include header for ProblemManager
-//#include "usermanager.h"    // Include header for UserManager
-//#include "submissionmonitor.h" // Include header for SubmissionMonitor
+#include <QPixmap>
+//#include "usermanager.h"
+//#include "submissionmonitor.h"
 
 admindashboard::admindashboard(QWidget *parent) :
     QDialog(parent),
@@ -24,16 +24,11 @@ admindashboard::~admindashboard()
 
 void admindashboard::on_userManagerButton_clicked()
 {
-    // Open the User Manager dialog
+
    usermanager userManagerDialog(this);
    userManagerDialog.exec();
 }
 
-// AdminDashboard::on_submissionMonitorButton_clicked() {
-    // Open the Submission Monitor dialog
-   // SubmissionMonitor submissionMonitorDialog(this);
-//submissionMonitorDialog.exec();
-//}
 
 
 

@@ -25,4 +25,4 @@ private:
     Ui::admindashboard *ui;
 };
 
-#endif // ADMINDASHBOARD_H
+#endif

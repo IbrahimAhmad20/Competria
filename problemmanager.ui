@@ -47,6 +47,15 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QTableWidget" name="tableWidget">
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>50</number>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>150</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
          <column>
           <property name="text">
            <string>ID</string>
@@ -70,41 +79,6 @@
           <string notr="true">background : 964EC2 ;</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QPushButton" name="viewButton">
-            <property name="layoutDirection">
-             <enum>Qt::LayoutDirection::LeftToRight</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">    border: 2px solid #CCCCCC;
-    border-radius: 15px;
-    font-size: 16px;
-    padding: 8px 16px;
-    background-color: #17A398;
-    color: #FFFFFF;
-</string>
-            </property>
-            <property name="text">
-             <string>   View</string>
-            </property>
-            <property name="icon">
-             <iconset resource="src.qrc">
-              <normaloff>:/new/prefix1/src/arrow_menu_open_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normaloff>:/new/prefix1/src/arrow_menu_open_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="default">
-             <bool>false</bool>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item>
            <widget class="QPushButton" name="createButton">
             <property name="styleSheet">

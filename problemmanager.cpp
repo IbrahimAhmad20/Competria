@@ -158,7 +158,7 @@ void problemManager::populateTable()
     }
 
     QSqlQuery query = db.getAllProblems();
-    ui->tableWidget->setRowCount(0); // Clear existing rows
+    ui->tableWidget->setRowCount(0);
 
     int row = 0;
     while (query.next())
@@ -173,65 +173,16 @@ void problemManager::populateTable()
         ui->tableWidget->setItem(row, 6, new QTableWidgetItem(query.value("Example").toString()));
         row++;
     }
+
+
 }
 
-/*void problemManager::on_createButton_clicked()
-{
-    QString topicsInput = QInputDialog::getText(this, "Create Problem", "Enter Topic IDs (comma-separated):");
-    QList<int> topicIDs;
-    if (!topicsInput.isEmpty()) {
-        for (const QString &id : topicsInput.split(",")) {
-            topicIDs.append(id.trimmed().toInt());
-        }
-    }
 
-    QString title = QInputDialog::getText(this, "Create Problem", "Enter Problem Title:");
-    if (title.isEmpty()) return;
-
-    QString description = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Problem Description:");
-    QString inputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Input Format:");
-    QString outputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Output Format:");
-    QString constraints = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Constraints:");
-    QString example = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Example:");
-
-    Database db;
-    if (db.connect() && db.createProblem(title, description, inputFormat, outputFormat, constraints, example, topicIDs))
-    {
-        QMessageBox::information(this, "Success", "Problem created successfully!");
-        populateTable();
-    }
-
-    else
-    {
-        QMessageBox::warning(this, "Error", "Failed to create problem.");
-    }
-}*/
 void problemManager::on_createButton_clicked()
 {
-    // Step 1: Get topic names from the user
-    QString topicsInput = QInputDialog::getText(this, "Create Problem", "Enter Topic Names (comma-separated):");
-    QList<int> topicIDs;
+    QString topic = QInputDialog::getText(this, "Create Problem", "Enter Topic Name:");
+    if (topic.isEmpty()) return;
 
-    if (!topicsInput.isEmpty()) {
-        QStringList topicNames = topicsInput.split(",", Qt::SkipEmptyParts);
-        Database db;
-
-        if (db.connect()) {
-            for (const QString &topicName : topicNames) {
-                int topicID = db.getTopicIDByName(topicName.trimmed());
-                if (topicID != -1) {
-                    topicIDs.append(topicID);
-                } else {
-                    QMessageBox::warning(this, "Warning", "Topic not found: " + topicName);
-                }
-            }
-        } else {
-            QMessageBox::warning(this, "Error", "Failed to connect to the database.");
-            return;
-        }
-    }
-
-    // Step 2: Get other problem details
     QString title = QInputDialog::getText(this, "Create Problem", "Enter Problem Title:");
     if (title.isEmpty()) return;
 
@@ -241,14 +192,15 @@ void problemManager::on_createButton_clicked()
     QString constraints = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Constraints:");
     QString example = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Example:");
 
-    // Step 3: Insert problem into the database
     Database db;
-    if (db.connect() && db.createProblem(title, description, inputFormat, outputFormat, constraints, example, topicIDs)) {
+    if (db.connect() && db.createProblem(title, description, inputFormat, outputFormat, constraints, example, topic)) {
         QMessageBox::information(this, "Success", "Problem created successfully!");
         populateTable();
     } else {
         QMessageBox::warning(this, "Error", "Failed to create problem.");
     }
+    populateTable();
+
 }
 
 
@@ -270,7 +222,10 @@ void problemManager::on_deleteButton_clicked()
     } else {
         QMessageBox::warning(this, "Error", "Failed to delete problem.");
     }
+    populateTable();
+
 }
+
 
 void problemManager::on_editButton_clicked()
 {
@@ -281,19 +236,32 @@ void problemManager::on_editButton_clicked()
         return;
     }
 
-    int id = ui->tableWidget->item(row, 0)->text().toInt();
-    QString title = QInputDialog::getText(this, "Edit Problem", "Enter new title:", QLineEdit::Normal, ui->tableWidget->item(row, 1)->text());
-    QString description = QInputDialog::getText(this, "Edit Problem", "Enter new description:", QLineEdit::Normal, ui->tableWidget->item(row, 2)->text());
-    QString inputFormat = QInputDialog::getText(this, "Edit Problem", "Enter new input format:", QLineEdit::Normal, ui->tableWidget->item(row, 3)->text());
-    QString outputFormat = QInputDialog::getText(this, "Edit Problem", "Enter new output format:", QLineEdit::Normal, ui->tableWidget->item(row, 4)->text());
-    QString constraints = QInputDialog::getText(this, "Edit Problem", "Enter new constraints:", QLineEdit::Normal, ui->tableWidget->item(row, 5)->text());
-    QString example = QInputDialog::getText(this, "Edit Problem", "Enter new example:", QLineEdit::Normal, ui->tableWidget->item(row, 6)->text());
+    auto getCellText = [this, row](int column) -> QString {
+        QTableWidgetItem *item = ui->tableWidget->item(row, column);
+        return item ? item->text() : "";
+    };
+
+    int id = getCellText(0).toInt();
+    QString title = QInputDialog::getText(this, "Edit Problem", "Enter new title:",
+                                          QLineEdit::Normal, getCellText(1));
+    QString description = QInputDialog::getText(this, "Edit Problem", "Enter new description:",
+                                                QLineEdit::Normal, getCellText(2));
+    QString inputFormat = QInputDialog::getText(this, "Edit Problem", "Enter new input format:",
+                                                QLineEdit::Normal, getCellText(3));
+    QString outputFormat = QInputDialog::getText(this, "Edit Problem", "Enter new output format:",
+                                                 QLineEdit::Normal, getCellText(4));
+    QString constraints = QInputDialog::getText(this, "Edit Problem", "Enter new constraints:",
+                                                QLineEdit::Normal, getCellText(5));
+    QString example = QInputDialog::getText(this, "Edit Problem", "Enter new example:",
+                                            QLineEdit::Normal, getCellText(6));
+    QString topic = QInputDialog::getText(this, "Edit Problem", "Enter new topic:",
+                                          QLineEdit::Normal, getCellText(7));  // Topic column is the last
 
     Database db;
-    if (db.connect() && db.updateProblem(id, title, description, inputFormat, outputFormat, constraints, example))
+    if (db.connect() && db.updateProblem(id, title, description, inputFormat, outputFormat, constraints, example, topic))
     {
         QMessageBox::information(this, "Success", "Problem updated successfully!");
-        populateTable();
+        populateTable();  // Refresh the table
     }
     else
     {
@@ -301,7 +269,5 @@ void problemManager::on_editButton_clicked()
     }
 }
 
-void problemManager::on_viewButton_clicked()
-{
-    populateTable();
-}
+
+

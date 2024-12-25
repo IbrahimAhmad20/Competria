@@ -22,11 +22,11 @@ public:
     ~usermanager();
 
 private slots:
-    void loadUsers(); // Load users from the database into the table
+    void loadUsers();
 
-    void on_adduserButton_clicked();// Handle the Add button
+    void on_adduserButton_clicked();
 
-    void on_deleteuserButton_clicked(); // Handle the Delete button
+    void on_deleteuserButton_clicked();
 
     void on_edituserButton_clicked();
 
@@ -36,4 +36,4 @@ private:
     void setupConnections();
 };
 
-#endif // USERMANAGER_H
+#endif

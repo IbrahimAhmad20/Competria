@@ -10,7 +10,7 @@ usermanager::usermanager(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Initialize database connection
+
     if (!db.connect())
     {
         QMessageBox::critical(this, "Error", "Failed to connect to the database.");
@@ -28,9 +28,9 @@ usermanager::~usermanager()
 
 void usermanager::loadUsers()
 {
-    ui->usertable->setRowCount(0); // Clear the table
+    ui->usertable->setRowCount(0);
 
-    QSqlQuery query = db.getAllUsers(); // Assuming you implement `getAllUsers()` in `Database`
+    QSqlQuery query = db.getAllUsers();
     if (!query.isActive()) return;
 
     int row = 0;
@@ -108,7 +108,7 @@ void usermanager::on_edituserButton_clicked()
         return;
     }
 
-    if (db.updateUser(id, newEmail, newUsername, newPassword)) { // Assuming `updateUser()` is implemented in `Database`
+    if (db.updateUser(id, newEmail, newUsername, newPassword)) {
         QMessageBox::information(this, "Success", "User updated successfully.");
         loadUsers();
     } else

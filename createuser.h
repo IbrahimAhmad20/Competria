@@ -24,4 +24,4 @@ private:
     Ui::createuser *ui;
 };
 
-#endif // CREATEUSER_H
+#endif
