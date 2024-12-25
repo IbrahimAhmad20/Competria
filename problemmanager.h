@@ -22,6 +22,8 @@ private slots:
     void on_editButton_clicked();
     void populateTable();
 
+    void on_addTestCaseButton_clicked();
+
 private:
     Ui::problemManager *ui;
 };

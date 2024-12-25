@@ -1,7 +1,7 @@
 #include "sessionmanager.h"
 
-// Initialize singleton instance
-sessionManager& sessionManager::instance() {
+sessionManager& sessionManager::instance()
+{
     static sessionManager instance;
     return instance;
 }
@@ -20,23 +20,24 @@ void sessionManager::setLoggedInUser(int userId, const QString& username) {
 }
 
 // Logout and clear the session
-void sessionManager::logout() {
+void sessionManager::logout()
+{
     this->userId = -1;
     this->username.clear();
     this->loggedIn = false;
 }
 
-// Check if a user is logged in
-bool sessionManager::isLoggedIn() const {
+bool sessionManager::isLoggedIn() const
+{
     return loggedIn;
 }
 
-// Get the logged-in user's ID
-int sessionManager::getUserId() const {
+int sessionManager::getUserId() const
+{
     return userId;
 }
 
-// Get the logged-in user's username
-QString sessionManager::getUsername() const {
+QString sessionManager::getUsername() const
+{
     return username;
 }

@@ -1,134 +1,3 @@
-/*#include "problemmanager.h"
-#include "ui_problemmanager.h"
-#include "database.h"
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QLineEdit>
-#include <QPixmap>
-#include <QCryptographicHash>
-
-
-problemManager::problemManager(QWidget *parent)
-    : QDialog(parent), ui(new Ui::problemManager)
-{
-    ui->setupUi(this);
-    populateTable();
-}
-
-problemManager::~problemManager()
-{
-    delete ui;
-}
-
-void problemManager::populateTable()
-{
-    Database db;
-    if (!db.connect())
-    {
-        QMessageBox::warning(this, "Error", "Failed to connect to the database.");
-        return;
-    }
-
-    QSqlQuery query = db.getAllProblems();
-    ui->tableWidget->setRowCount(0); // Clear existing rows
-
-    int row = 0;
-    while (query.next())
-    {
-        ui->tableWidget->insertRow(row);
-        ui->tableWidget->setItem(row, 0, new QTableWidgetItem(query.value("ID").toString()));
-        ui->tableWidget->setItem(row, 1, new QTableWidgetItem(query.value("Title").toString()));
-        ui->tableWidget->setItem(row, 2, new QTableWidgetItem(query.value("Description").toString()));
-        row++;
-    }
-}
-
-void problemManager::on_createButton_clicked()
-{
-
-    QString title = QInputDialog::getText(this, "Create Problem", "Enter Problem Title:");
-    if (title.isEmpty()) return;
-
-    QString description = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Problem Description:");
-    QString inputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Input Format:");
-    QString outputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Output Format:");
-    QString sampleInputs = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Sample Inputs:");
-    QString sampleOutputs = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Sample Outputs:");
-
-    // Insert into database
-    QSqlQuery query;
-    query.prepare("INSERT INTO problems (title, description, input_format, output_format, sample_inputs, sample_outputs) "
-                  "VALUES (:title, :description, :input_format, :output_format, :sample_inputs, :sample_outputs)");
-    query.bindValue(":title", title);
-    query.bindValue(":description", description);
-    query.bindValue(":input_format", inputFormat);
-    query.bindValue(":output_format", outputFormat);
-    query.bindValue(":sample_inputs", sampleInputs);
-    query.bindValue(":sample_outputs", sampleOutputs);
-
-    Database db;
-    if (db.connect() && db.createProblem(title, description))
-    {
-        QMessageBox::information(this, "Success", "Problem created successfully!");
-        populateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, "Error", "Failed to create problem.");
-    }
-}
-
-void problemManager::on_deleteButton_clicked()
-{
-  int row = ui->tableWidget->currentRow();
-    if (row == -1)
-    {
-        QMessageBox::warning(this, "Error", "Please select a problem to delete.");
-        return;
-    }
-
-    int id = ui->tableWidget->item(row, 0)->text().toInt();
-
-    Database db;
-    if (db.connect() && db.deleteProblem(id)) {
-        QMessageBox::information(this, "Success", "Problem deleted successfully!");
-        populateTable();
-    } else {
-        QMessageBox::warning(this, "Error", "Failed to delete problem.");
-    }
-}
-
-void problemManager::on_editButton_clicked()
-{
-   int row = ui->tableWidget->currentRow();
-    if (row == -1)
-    {
-        QMessageBox::warning(this, "Error", "Please select a problem to edit.");
-        return;
-    }
-
-    int id = ui->tableWidget->item(row, 0)->text().toInt();
-    QString title = QInputDialog::getText(this, "Edit Problem", "Enter new title:", QLineEdit::Normal, ui->tableWidget->item(row, 1)->text());
-    QString description = QInputDialog::getText(this, "Edit Problem", "Enter new description:", QLineEdit::Normal, ui->tableWidget->item(row, 2)->text());
-
-    Database db;
-    if (db.connect() && db.updateProblem(id, title, description))
-    {
-        QMessageBox::information(this, "Success", "Problem updated successfully!");
-        populateTable();
-    }
-    else
-    {
-        QMessageBox::warning(this, "Error", "Failed to update problem.");
-    }
-
-}
-
-void problemManager::on_viewButton_clicked()
-{
-    populateTable();
-}
-*/
 #include "problemmanager.h"
 #include "ui_problemmanager.h"
 #include "database.h"
@@ -178,7 +47,7 @@ void problemManager::populateTable()
 }
 
 
-void problemManager::on_createButton_clicked()
+/*void problemManager::on_createButton_clicked()
 {
     QString topic = QInputDialog::getText(this, "Create Problem", "Enter Topic Name:");
     if (topic.isEmpty()) return;
@@ -202,6 +71,69 @@ void problemManager::on_createButton_clicked()
     populateTable();
 
 }
+*/
+void problemManager::on_createButton_clicked()
+{
+    // Step 1: Collect problem details
+    QString topic = QInputDialog::getText(this, "Create Problem", "Enter Topic Name:");
+    if (topic.isEmpty()) return;
+
+    QString title = QInputDialog::getText(this, "Create Problem", "Enter Problem Title:");
+    if (title.isEmpty()) return;
+
+    QString description = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Problem Description:");
+    QString inputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Input Format:");
+    QString outputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Output Format:");
+    QString constraints = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Constraints:");
+    QString example = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Example:");
+
+    // Step 2: Insert the problem into the database
+    Database db;
+    if (!db.connect()) {
+        QMessageBox::warning(this, "Error", "Failed to connect to the database.");
+        return;
+    }
+
+    int problemId = db.createProblemAndReturnId(title, description, inputFormat, outputFormat, constraints, example, topic);
+    qDebug() << "Created Problem ID:" << problemId;
+    if (problemId == -1) {
+        QMessageBox::warning(this, "Error", "Failed to create problem.");
+        return;
+    }
+
+    QMessageBox::information(this, "Success", "Problem created successfully! Now, add test cases.");
+
+    // Step 3: Prompt the admin to add test cases
+    while (true)
+    {
+        QString input = QInputDialog::getMultiLineText(this, "Add Test Case", "Enter Input for Test Case:");
+        if (input.isEmpty()) break;
+
+        QString expectedOutput = QInputDialog::getMultiLineText(this, "Add Test Case", "Enter Expected Output for Test Case:");
+        if (expectedOutput.isEmpty()) break;
+
+        double weight = QInputDialog::getDouble(this, "Add Test Case", "Enter Weight for Test Case:", 1.0, 0.0, 100.0, 2);
+
+        Database db;
+        if (db.connect() && db.addTestCase(problemId, input, expectedOutput, weight))
+        {
+            QMessageBox::information(this, "Success", "Test case added successfully!");
+        } else
+        {
+            QMessageBox::warning(this, "Error", "Failed to add test case.");
+        }
+
+        // Ask if the admin wants to add another test case
+        QMessageBox::StandardButton reply = QMessageBox::question(
+            this, "Add Another?", "Do you want to add another test case?",
+            QMessageBox::Yes | QMessageBox::No
+            );
+
+        if (reply == QMessageBox::No) break;
+    }
+
+    populateTable(); // Refresh the table with the updated problem list
+}
 
 
 void problemManager::on_deleteButton_clicked()
@@ -214,17 +146,34 @@ void problemManager::on_deleteButton_clicked()
     }
 
     int id = ui->tableWidget->item(row, 0)->text().toInt();
+    qDebug() << "Deleting problem with ID:" << id;
 
     Database db;
-    if (db.connect() && db.deleteProblem(id)) {
+    if (!db.connect()) {
+        QMessageBox::warning(this, "Error", "Failed to connect to the database.");
+        return;
+    }
+
+    // Delete related test cases first (if necessary)
+    QSqlQuery deleteTestCasesQuery;
+    deleteTestCasesQuery.prepare("DELETE FROM TestCases WHERE Problem_Id = ?");
+    deleteTestCasesQuery.addBindValue(id);
+    if (!deleteTestCasesQuery.exec()) {
+        QMessageBox::warning(this, "Error", "Failed to delete related test cases.");
+        qDebug() << "Error deleting test cases:" << deleteTestCasesQuery.lastError().text();
+        return;
+    }
+
+    // Delete the problem itself
+    if (db.deleteProblem(id)) {
         QMessageBox::information(this, "Success", "Problem deleted successfully!");
         populateTable();
     } else {
         QMessageBox::warning(this, "Error", "Failed to delete problem.");
+        qDebug() << "Error deleting problem.";
     }
-    populateTable();
-
 }
+
 
 
 void problemManager::on_editButton_clicked()
@@ -270,4 +219,22 @@ void problemManager::on_editButton_clicked()
 }
 
 
+
+
+void problemManager::on_addTestCaseButton_clicked()
+{
+    int problemId = QInputDialog::getInt(this, "Add Test Case", "Enter Problem ID:");
+    QString input = QInputDialog::getMultiLineText(this, "Add Test Case", "Enter Input:");
+    QString expectedOutput = QInputDialog::getMultiLineText(this, "Add Test Case", "Enter Expected Output:");
+    double weight = QInputDialog::getDouble(this, "Add Test Case", "Enter Weight:", 1.0);
+
+    Database db;
+    if (db.connect() && db.addTestCase(problemId, input, expectedOutput, weight))
+    {
+        QMessageBox::information(this, "Success", "Test case added successfully!");
+    } else
+    {
+        QMessageBox::warning(this, "Error", "Failed to add test case.");
+    }
+}
 

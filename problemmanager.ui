@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>980</width>
-    <height>564</height>
+    <width>909</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,7 +74,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="AddTestCase">
          <property name="styleSheet">
           <string notr="true">background : 964EC2 ;</string>
          </property>
@@ -141,6 +141,13 @@
             </property>
             <property name="autoDefault">
              <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addTestCaseButton">
+            <property name="text">
+             <string>Add Test Case</string>
             </property>
            </widget>
           </item>

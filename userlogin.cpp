@@ -9,6 +9,10 @@
 userlogin::userlogin(QWidget *parent) : QDialog(parent), ui(new Ui::userlogin)
 {
     ui->setupUi(this);
+    QPixmap  pix(":/new/prefix1/src/person_28dp_E5EFC1_FILL0_wght400_GRAD0_opsz24.png") ;
+    ui->username_label->setPixmap(pix.scaled(40,40)) ;
+    QPixmap pic2(":/new/prefix1/src/password_28dp_E5EFC1_FILL0_wght400_GRAD0_opsz24.png");
+    ui->password_label->setPixmap(pic2.scaled(40,40));
 }
 
 userlogin::~userlogin()

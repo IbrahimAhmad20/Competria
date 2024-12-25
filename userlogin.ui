@@ -19,7 +19,7 @@
      <x>110</x>
      <y>60</y>
      <width>531</width>
-     <height>331</height>
+     <height>336</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -32,19 +32,17 @@
        <widget class="QLabel" name="loginlabel">
         <property name="font">
          <font>
-          <family>Script MT Bold</family>
-          <pointsize>14</pointsize>
+          <family>Segoe UI Semibold</family>
+          <pointsize>12</pointsize>
           <italic>false</italic>
-          <bold>true</bold>
+          <fontweight>DemiBold</fontweight>
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">font-color : rgb(255,255, 255);
-font: 700 14pt &quot;Script MT Bold&quot;;
-</string>
+         <string notr="true">font: 600 12pt &quot;Segoe UI Semibold&quot;;</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt; font-weight:700;&quot;&gt;Login&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:26pt; font-weight:700;&quot;&gt;Login&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="margin">
          <number>18</number>
@@ -69,7 +67,20 @@ font: 700 14pt &quot;Script MT Bold&quot;;
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="username_lineEdit"/>
+         <widget class="QLineEdit" name="username_lineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 12pt &quot;Segoe UI&quot;;</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -89,6 +100,15 @@ font: 700 14pt &quot;Script MT Bold&quot;;
         </item>
         <item>
          <widget class="QLineEdit" name="password_lineEdit_2">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 12pt &quot;Segoe UI&quot;;</string>
+          </property>
           <property name="echoMode">
            <enum>QLineEdit::EchoMode::Password</enum>
           </property>

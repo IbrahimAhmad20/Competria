@@ -23,7 +23,7 @@ public:
     bool deleteUser(int id);
     QSqlQuery getAllUsers();
     bool updateUser(int id, const QString& email, const QString& username, const QString& password);
-
+    QSqlQuery getProblemDetails();
 
     bool createProblem(const QString& title, const QString& description,
                        const QString& inputFormat, const QString& outputFormat,
@@ -44,10 +44,14 @@ public:
     {
         currentUserId = userId;
     }
-
+    QSqlQuery getTestCases(int problemId);
     int getCurrentUserId() const {
         return currentUserId;
     }
+    bool addTestCase(int problemId, const QString &input, const QString &expectedOutput, double weight);
+    int createProblemAndReturnId(const QString &title, const QString &description, const QString &inputFormat,
+                                           const QString &outputFormat, const QString &constraints,
+                                           const QString &example, const QString &topic);
 private:
     QSqlDatabase db;
       int currentUserId = -1; // Default: no user logged in

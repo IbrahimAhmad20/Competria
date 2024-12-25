@@ -157,7 +157,7 @@ solveproblemwindow::~solveproblemwindow()
 }
 
 */
-void solveproblemwindow::runCode()
+/*void solveproblemwindow::runCode()
 {
     QString userCode = scintilla->text();  // Use the member variable
 
@@ -211,7 +211,7 @@ void solveproblemwindow::runCode()
         ui->plainTextEdit_4->setPlainText("Runtime Error:\n" + error);
     }
 }
-
+*/
 void solveproblemwindow::on_submitButton_clicked() {
     if (!sessionManager::instance().isLoggedIn()) {
         QMessageBox::warning(this, "Error", "No user is logged in. Please log in to submit.");
@@ -219,8 +219,7 @@ void solveproblemwindow::on_submitButton_clicked() {
     }
 
     int userId = sessionManager::instance().getUserId();
-    QString userCode = ui->codeEditor->toPlainText();
-
+    QString userCode = scintilla->text();
     if (db.saveSubmission(userId, problemId, userCode))
     {
         QMessageBox::information(this, "Success", "Submission saved!");
@@ -228,5 +227,88 @@ void solveproblemwindow::on_submitButton_clicked() {
         QMessageBox::warning(this, "Error", "Failed to save submission.");
     }
 }
+void solveproblemwindow::runCode()
+{
+    QString userCode = scintilla->text();
 
+    // Save user code to a file
+    QFile codeFile("user_code.cpp");
+    if (!codeFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error", "Failed to save code to file.");
+        return;
+    }
+    QTextStream out(&codeFile);
+    out << userCode;
+    codeFile.close();
+
+    // Compile the code
+    process->start("g++", QStringList() << "-o" << "user_code" << "user_code.cpp");
+    process->waitForFinished();
+
+    if (process->exitCode() != 0) {
+        ui->plainTextEdit_4->setPlainText("Compilation Error:\n" + process->readAllStandardError());
+        return;
+    }
+
+    // Fetch test cases for the problem
+    QSqlQuery testCaseQuery = db.getTestCases(problemId);
+
+    int totalCases = 0;
+    int passedCases = 0;
+    double score = 0.0;
+
+    while (testCaseQuery.next()) {
+        QString testCaseInput = testCaseQuery.value("Input").toString();
+        QString expectedOutput = testCaseQuery.value("ExpectedOutput").toString().trimmed();
+        double weight = testCaseQuery.value("Weight").toDouble();
+
+        // Log test case details
+        qDebug() << "Test Case Input:" << testCaseInput;
+        qDebug() << "Expected Output:" << expectedOutput;
+
+        // Run the compiled executable with the test case input
+        QProcess testProcess;
+        testProcess.setProgram("./user_code");
+        testProcess.start();
+
+        if (!testProcess.waitForStarted()) {
+            ui->plainTextEdit_4->setPlainText("Failed to start the program.");
+            return;
+        }
+
+        // Provide input
+        testProcess.write(testCaseInput.toUtf8());
+        testProcess.closeWriteChannel(); // Signal end of input
+
+        if (!testProcess.waitForFinished()) {
+            ui->plainTextEdit_4->setPlainText("Program execution timed out.");
+            return;
+        }
+
+        QString userOutput = testProcess.readAllStandardOutput().trimmed();
+        qDebug() << "Program Output:" << userOutput;
+
+        // Compare output
+        if (userOutput == expectedOutput) {
+            passedCases++;
+            score += weight;
+        } else {
+            qDebug() << "Test case failed.";
+        }
+
+        totalCases++;
+    }
+
+    // Display results
+    QString resultSummary = QString("Total Cases: %1\nPassed Cases: %2\nScore: %3")
+                                .arg(totalCases)
+                                .arg(passedCases)
+                                .arg(score);
+
+    ui->plainTextEdit_4->setPlainText(resultSummary);
+
+    // Save the results
+    QString status = (passedCases == totalCases) ? "Accepted" : "Partial";
+    db.saveResult(problemId, status, 0.0, 0.0);
+}
 

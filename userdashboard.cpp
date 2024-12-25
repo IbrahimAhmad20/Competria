@@ -15,9 +15,44 @@ userdashboard::userdashboard(QWidget *parent) :
 
     // Set window properties
     setWindowTitle("User Dashboard");
-    setModal(true); // Optional: Make it modal
-    setFixedSize(size()); // Optional: Prevent resizing
+    setModal(true);
+    setFixedSize(size());
 
+    // Apply styling to the dialog
+    this->setStyleSheet(
+        "QDialog {"
+        "    background-color: #2b2b2b;"
+        "    color: white;"
+        "    border-radius: 10px;"
+        "    padding: 10px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #9a76b1;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: #6a4a75;"
+        "}"
+        "QTableWidget {"
+        "    background-color: #3c3f41;"
+        "    alternate-background-color: #4a4a4a;"
+        "    gridline-color: #5a5a5a;"
+        "    color: white;"
+        "    border: 1px solid #5c5c5c;"
+        "    font-size: 14px;"
+        "}"
+        "QHeaderView::section {"
+        "    background-color: #4a4a4a;"
+        "    color: white;"
+        "    padding: 4px;"
+        "    border: none;"
+        "    font-weight: bold;"
+        "    text-align: left;"
+        "}"
+        "QTableWidget::item:selected {"
+        "    background-color: #7b5c8e;"
+        "    color: white;"
+        "}"
+        );
     // Load problems into the table view
     loadProblems();
 
@@ -38,7 +73,7 @@ void userdashboard::loadProblems()
         return;
     }
 
-    QSqlQuery query = db.getAllProblems();
+    QSqlQuery query = db.getProblemDetails();  // Use the new function
 
     if (!query.exec())
     {
@@ -48,7 +83,7 @@ void userdashboard::loadProblems()
 
     // Clear the table and set headers programmatically
     ui->problemTable->clear();
-    QStringList headers = {"ID", "Title", "Constraints", "Topic"};
+    QStringList headers = {"ID", "Title", "Topic", "Constraints", "Description"};
     ui->problemTable->setColumnCount(headers.size());
     ui->problemTable->setHorizontalHeaderLabels(headers);
 
@@ -60,13 +95,19 @@ void userdashboard::loadProblems()
         ui->problemTable->insertRow(row);
         ui->problemTable->setItem(row, 0, new QTableWidgetItem(query.value("ID").toString()));
         ui->problemTable->setItem(row, 1, new QTableWidgetItem(query.value("Title").toString()));
-        ui->problemTable->setItem(row, 2, new QTableWidgetItem(query.value("Constraints").toString()));
-        ui->problemTable->setItem(row, 3, new QTableWidgetItem(query.value("Topic").toString()));
+        ui->problemTable->setItem(row, 2, new QTableWidgetItem(query.value("Topic").toString()));
+        ui->problemTable->setItem(row, 3, new QTableWidgetItem(query.value("Constraints").toString()));
+        ui->problemTable->setItem(row, 4, new QTableWidgetItem(query.value("Description").toString()));
         row++;
     }
 
+    // Adjust column widths and table properties
     ui->problemTable->resizeColumnsToContents();
+    ui->problemTable->horizontalHeader()->setStretchLastSection(true);
+    ui->problemTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
+
+
 
 void userdashboard::on_SolveChallenge_clicked()
 {
@@ -117,7 +158,4 @@ void userdashboard::onProblemSelected(int row, int column)
     QMessageBox::information(this, "Problem Selected",
                              QString("You selected Problem ID: %1\nTitle: %2").arg(problemId).arg(title));
 
-    // Optionally, you could open the solve problem window here:
-    // solveproblemwindow *solveWindow = new solveproblemwindow(db, problemId, this);
-    // solveWindow->exec();
 }

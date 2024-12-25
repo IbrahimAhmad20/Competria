@@ -228,7 +228,10 @@ bool Database::updateProblem(int id, const QString &title, const QString &descri
 bool Database::deleteProblem(int id)
 {
     if (!db.isOpen()) return false;
-
+    QSqlQuery deleteTestCasesQuery;
+    deleteTestCasesQuery.prepare("DELETE FROM TestCases WHERE Problem_Id = ?");
+    deleteTestCasesQuery.addBindValue(id);
+    deleteTestCasesQuery.exec();
     QSqlQuery query(db);
     query.prepare("DELETE FROM Problems WHERE ID = ?");
     query.addBindValue(id);
@@ -288,13 +291,13 @@ bool Database::updateUser(int id, const QString &email, const QString &username,
 bool Database::saveSubmission(int userId, int problemId, const QString &code)
 {
     QSqlQuery query(db);
-    query.prepare("INSERT INTO Submissions (Users_Id, Problem_Id, Submission_Time, Code) "
-                  "VALUES (:userId, :problemId, :submissionTime, :code)");
+    query.prepare("INSERT INTO Submissions (Users_Id, Problem_Id, Submission_Time, Code, Language) "
+                  "VALUES (:userId, :problemId, :submissionTime, :code, :language)");
     query.bindValue(":userId", userId);
     query.bindValue(":problemId", problemId);
     query.bindValue(":submissionTime", QDateTime::currentDateTime());
     query.bindValue(":code", code);
-
+    query.bindValue(":language", "C++");
     return query.exec();
 }
 bool Database::saveResult(int submissionId, const QString &status, double runtime, double memoryUsed)
@@ -308,4 +311,72 @@ bool Database::saveResult(int submissionId, const QString &status, double runtim
     query.bindValue(":memoryUsed", memoryUsed);
 
     return query.exec();
+}
+QSqlQuery Database::getProblemDetails()
+{
+    QSqlQuery query;
+    query.prepare("SELECT ID, Title, Topic, Constraints, Description FROM Problems");
+    return query;
+}
+bool Database::addTestCase(int problemId, const QString &input, const QString &expectedOutput, double weight)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO TestCases (Problem_Id, Input, ExpectedOutput, Weight) VALUES (?, ?, ?, ?)");
+    query.addBindValue(problemId);
+    query.addBindValue(input);
+    query.addBindValue(expectedOutput);
+    query.addBindValue(weight);
+
+    if (!query.exec()) {
+        qDebug() << "Failed to insert test case:" << query.lastError();
+        return false;
+    }
+
+    return true;
+}
+int Database::createProblemAndReturnId(const QString &title, const QString &description, const QString &inputFormat,
+                                       const QString &outputFormat, const QString &constraints, const QString &example,
+                                       const QString &topic)
+{
+    QSqlQuery query;
+
+    // Prepare the INSERT query
+    query.prepare("INSERT INTO Problems (Title, Description, Input_Format, Output_Format, Constraints, Example, Topic) "
+                  "VALUES (?, ?, ?, ?, ?, ?, ?)");
+    query.addBindValue(title);
+    query.addBindValue(description);
+    query.addBindValue(inputFormat);
+    query.addBindValue(outputFormat);
+    query.addBindValue(constraints);
+    query.addBindValue(example);
+    query.addBindValue(topic);
+
+    // Execute the query
+    if (!query.exec()) {
+        qDebug() << "Failed to insert problem:" << query.lastError().text();
+        return -1;  // Return -1 on failure
+    }
+
+    // Retrieve the auto-generated ID (assuming Access's `@@IDENTITY`)
+    if (query.exec("SELECT @@IDENTITY")) {
+        if (query.next()) {
+            return query.value(0).toInt();  // Return the generated ID
+        }
+    }
+
+    qDebug() << "Failed to retrieve the auto-generated ID:" << query.lastError().text();
+    return -1;  // Return -1 if ID retrieval fails
+}
+
+QSqlQuery Database::getTestCases(int problemId)
+{
+    QSqlQuery query(getDatabase());
+    query.prepare("SELECT Input, ExpectedOutput, Weight FROM TestCases WHERE Problem_Id = ?");
+    query.addBindValue(problemId);
+
+    if (!query.exec()) {
+        qDebug() << "Error fetching test cases:" << query.lastError().text();
+    }
+
+    return query;
 }
