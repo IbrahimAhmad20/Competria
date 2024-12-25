@@ -25,7 +25,7 @@ public:
 private slots:
     void runCode();
  void on_submitButton_clicked();
-
+    void saveResults(int submissionId) ;
 private:
     Ui::solveproblemwindow *ui;
     int problemId;

@@ -18,7 +18,7 @@ SOURCES += \
     problemmanager.cpp \
     sessionmanager.cpp \
     solveproblemwindow.cpp \
-    submissionhandler.cpp \
+    submissionmanager.cpp \
     userdashboard.cpp \
     userlogin.cpp \
     usermanager.cpp
@@ -32,7 +32,7 @@ HEADERS += \
     problemmanager.h \
     sessionmanager.h \
     solveproblemwindow.h \
-    submissionhandler.h \
+    submissionmanager.h \
     userdashboard.h \
     userlogin.h \
     usermanager.h
@@ -44,7 +44,6 @@ FORMS += \
     mainwindow.ui \
     problemmanager.ui \
     solveproblemwindow.ui \
-    submissionhandler.ui \
     userdashboard.ui \
     userlogin.ui \
     usermanager.ui

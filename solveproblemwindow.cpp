@@ -4,12 +4,13 @@
 #include <qmessagebox.h>
 #include "sessionmanager.h"
 #include <Qsci/qsciapis.h>
+#include "submissionmanager.h"
 
 solveproblemwindow::solveproblemwindow(Database &db, int problemId, QWidget *parent)
     : QDialog(parent),
     ui(new Ui::solveproblemwindow),
     problemId(problemId),
-    db(db),
+    db(db), 
     process(new QProcess(this)) ,// Add this line to initialize db
     scintilla(new QsciScintilla(this))
 {
@@ -212,7 +213,7 @@ solveproblemwindow::~solveproblemwindow()
     }
 }
 */
-void solveproblemwindow::on_submitButton_clicked() {
+/*void solveproblemwindow::on_submitButton_clicked() {
     if (!sessionManager::instance().isLoggedIn()) {
         QMessageBox::warning(this, "Error", "No user is logged in. Please log in to submit.");
         return;
@@ -220,13 +221,44 @@ void solveproblemwindow::on_submitButton_clicked() {
 
     int userId = sessionManager::instance().getUserId();
     QString userCode = scintilla->text();
-    if (db.saveSubmission(userId, problemId, userCode))
-    {
+    int submissionId = db.saveSubmission(userId, problemId, userCode);
+    if (submissionId > 0) {
         QMessageBox::information(this, "Success", "Submission saved!");
+
+        // Call saveResults after submission is saved
+        saveResults(submissionId);
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to save submission.");
+    }
+
+}*/
+void solveproblemwindow::on_submitButton_clicked()
+{
+    if (!sessionManager::instance().isLoggedIn())
+    {
+        QMessageBox::warning(this, "Error", "No user is logged in. Please log in to submit.");
+        return;
+    }
+
+    int userId = sessionManager::instance().getUserId();
+    QString userCode = scintilla->text();
+
+    // Create a SubmissionManager instance
+    SubmissionManager submissionManager(db);
+
+    // Save the submission and retrieve the submission ID
+    int submissionId = submissionManager.saveSubmission(userId, problemId, userCode);
+
+    if (submissionId > 0) {
+        QMessageBox::information(this, "Success", "Submission saved!");
+
+        // Call saveResults after the submission is saved
+        saveResults(submissionId);
     } else {
         QMessageBox::warning(this, "Error", "Failed to save submission.");
     }
 }
+
 void solveproblemwindow::runCode()
 {
     QString userCode = scintilla->text();
@@ -256,15 +288,17 @@ void solveproblemwindow::runCode()
     int totalCases = 0;
     int passedCases = 0;
     double score = 0.0;
+    QString status = "Pending";
+    double totalRuntime = 0.0;
+    double peakMemoryUsage = 0.0;
 
     while (testCaseQuery.next()) {
         QString testCaseInput = testCaseQuery.value("Input").toString();
         QString expectedOutput = testCaseQuery.value("ExpectedOutput").toString().trimmed();
         double weight = testCaseQuery.value("Weight").toDouble();
 
-        // Log test case details
-        qDebug() << "Test Case Input:" << testCaseInput;
-        qDebug() << "Expected Output:" << expectedOutput;
+        QElapsedTimer timer;
+        timer.start();
 
         // Run the compiled executable with the test case input
         QProcess testProcess;
@@ -276,39 +310,129 @@ void solveproblemwindow::runCode()
             return;
         }
 
-        // Provide input
         testProcess.write(testCaseInput.toUtf8());
-        testProcess.closeWriteChannel(); // Signal end of input
+        testProcess.closeWriteChannel();
 
         if (!testProcess.waitForFinished()) {
             ui->plainTextEdit_4->setPlainText("Program execution timed out.");
             return;
         }
 
+        // Measure runtime
+        double runtime = timer.elapsed() / 1000.0; // Time in seconds
+        totalRuntime += runtime;
+
+        // Measure memory usage (placeholder, platform-specific memory profiling tools can replace this)
+        // Assuming testProcess has a method for peak memory (if not, use OS-specific tools)
+        peakMemoryUsage = std::max(peakMemoryUsage, static_cast<double>(testProcess.processId()));
+
         QString userOutput = testProcess.readAllStandardOutput().trimmed();
-        qDebug() << "Program Output:" << userOutput;
 
         // Compare output
         if (userOutput == expectedOutput) {
             passedCases++;
             score += weight;
-        } else {
-            qDebug() << "Test case failed.";
         }
 
         totalCases++;
     }
 
-    // Display results
-    QString resultSummary = QString("Total Cases: %1\nPassed Cases: %2\nScore: %3")
+    // Determine status
+    status = (passedCases == totalCases) ? "Accepted" : "Partial";
+
+    // Display results in the UI
+    QString resultSummary = QString("Total Cases: %1\nPassed Cases: %2\nScore: %3\nRuntime: %4 sec\nMemory Used: %5 KB")
                                 .arg(totalCases)
                                 .arg(passedCases)
-                                .arg(score);
+                                .arg(score)
+                                .arg(totalRuntime)
+                                .arg(peakMemoryUsage);
 
     ui->plainTextEdit_4->setPlainText(resultSummary);
 
-    // Save the results
-    QString status = (passedCases == totalCases) ? "Accepted" : "Partial";
-    db.saveResult(problemId, status, 0.0, 0.0);
+}
+void solveproblemwindow::saveResults(int submissionId)
+{
+    QString userCode = scintilla->text();
+
+    // Save user code to a file
+    QFile codeFile("user_code.cpp");
+    if (!codeFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error", "Failed to save code to file.");
+        return;
+    }
+    QTextStream out(&codeFile);
+    out << userCode;
+    codeFile.close();
+
+    // Compile the code
+    process->start("g++", QStringList() << "-o" << "user_code" << "user_code.cpp");
+    process->waitForFinished();
+
+    if (process->exitCode() != 0)
+    {
+        QMessageBox::warning(this, "Error", "Compilation failed:\n" + process->readAllStandardError());
+        return;
+    }
+
+    // Fetch test cases from the database
+    QSqlQuery testCaseQuery = db.getTestCases(problemId);
+    int totalCases = 0;
+    int passedCases = 0;
+    double score = 0.0;
+    QString status = "Pending";
+    double totalRuntime = 0.0;
+    double peakMemoryUsage = 0.0;
+
+    while (testCaseQuery.next()) {
+        QString testCaseInput = testCaseQuery.value("Input").toString();
+        QString expectedOutput = testCaseQuery.value("ExpectedOutput").toString().trimmed();
+        double weight = testCaseQuery.value("Weight").toDouble();
+
+        QElapsedTimer timer;
+        timer.start();
+
+        QProcess testProcess;
+        testProcess.setProgram("./user_code");
+        testProcess.start();
+
+        if (!testProcess.waitForStarted()) {
+            QMessageBox::warning(this, "Error", "Failed to start the program.");
+            return;
+        }
+
+        testProcess.write(testCaseInput.toUtf8());
+        testProcess.closeWriteChannel();
+
+        if (!testProcess.waitForFinished()) {
+            QMessageBox::warning(this, "Error", "Program execution timed out.");
+            return;
+        }
+
+        double runtime = timer.elapsed() / 1000.0; // Time in seconds
+        totalRuntime += runtime;
+
+        QString userOutput = testProcess.readAllStandardOutput().trimmed();
+        if (userOutput == expectedOutput) {
+            passedCases++;
+            score += weight;
+        }
+
+        totalCases++;
+    }
+
+    status = (passedCases == totalCases) ? "Accepted" : "Partial";
+    qDebug() << "Problem ID:" << problemId;
+    qDebug() << "Submission ID:" << submissionId;
+    qDebug() << "Status:" << status;
+    qDebug() << "Runtime:" << totalRuntime;
+    qDebug() << "Memory Usage:" << peakMemoryUsage;
+    qDebug() << "Score:" << score;
+    // Save the results in the database
+    if (db.saveResult(submissionId, status, totalRuntime, peakMemoryUsage, score)) {
+        QMessageBox::information(this, "Success", "Results saved successfully!");
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to save results to the database.");
+    }
 }
 

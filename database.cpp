@@ -300,7 +300,7 @@ bool Database::saveSubmission(int userId, int problemId, const QString &code)
     query.bindValue(":language", "C++");
     return query.exec();
 }
-bool Database::saveResult(int submissionId, const QString &status, double runtime, double memoryUsed)
+/*bool Database::saveResult(int submissionId, const QString &status, double runtime, double memoryUsed)
 {
     QSqlQuery query(db);
     query.prepare("INSERT INTO Results (Submission_Id, Status, Runtime, Memory_Used) "
@@ -311,7 +311,7 @@ bool Database::saveResult(int submissionId, const QString &status, double runtim
     query.bindValue(":memoryUsed", memoryUsed);
 
     return query.exec();
-}
+}*/
 QSqlQuery Database::getProblemDetails()
 {
     QSqlQuery query;
@@ -379,4 +379,23 @@ QSqlQuery Database::getTestCases(int problemId)
     }
 
     return query;
+}
+bool Database::saveResult(int submissionId, const QString &status, double runtime, double memoryUsed, double finalScore)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO Results (Submission_Id, Status, Runtime, Memory_Used, Final_Score) "
+                  "VALUES (:submission_id, :status, :runtime, :memory_used, :final_score)");
+    query.bindValue(":submission_id", submissionId);
+    query.bindValue(":status", status);
+    query.bindValue(":runtime", runtime);
+    query.bindValue(":memory_used", memoryUsed);
+    query.bindValue(":final_score", finalScore);
+
+    if (!query.exec()) {
+        qDebug() << "Error inserting into Results table:" << query.lastError().text();
+        return false;
+    }
+
+    qDebug() << "Result saved successfully!";
+    return true;
 }

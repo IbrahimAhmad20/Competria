@@ -45,13 +45,15 @@ public:
         currentUserId = userId;
     }
     QSqlQuery getTestCases(int problemId);
-    int getCurrentUserId() const {
+    int getCurrentUserId() const
+    {
         return currentUserId;
     }
     bool addTestCase(int problemId, const QString &input, const QString &expectedOutput, double weight);
     int createProblemAndReturnId(const QString &title, const QString &description, const QString &inputFormat,
                                            const QString &outputFormat, const QString &constraints,
                                            const QString &example, const QString &topic);
+    bool saveResult(int submissionId, const QString &status, double runtime, double memoryUsed, double finalScore);
 private:
     QSqlDatabase db;
       int currentUserId = -1; // Default: no user logged in
