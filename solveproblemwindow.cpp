@@ -3,7 +3,7 @@
 #include "database.h"
 #include <qmessagebox.h>
 #include "sessionmanager.h"
-#include "submissionhandler.h"
+#include <Qsci/qsciapis.h>
 
 solveproblemwindow::solveproblemwindow(Database &db, int problemId, QWidget *parent)
     : QDialog(parent),
@@ -14,50 +14,89 @@ solveproblemwindow::solveproblemwindow(Database &db, int problemId, QWidget *par
     scintilla(new QsciScintilla(this))
 {
     ui->setupUi(this);
-    // Create QsciScintilla instance
-    QsciLexerCPP *cppLexer = new QsciLexerCPP(this);
-    scintilla->setLexer(cppLexer);
-    scintilla->setMarginType(0, QsciScintilla::NumberMargin);
-    scintilla->setMarginWidth(0, 40);
-    scintilla->setTabWidth(4);
-    scintilla->setAutoIndent(true);
 
-    // Replace the old editor widget with QsciScintilla
+    // Set up the QsciScintilla instance
+    QsciLexerCPP *cppLexer = new QsciLexerCPP(this);
+    QFont editorFont("Fira Code", 12); // Use a modern font with ligatures
+    scintilla->setFont(editorFont);
+    cppLexer->setFont(editorFont);
+    cppLexer->setDefaultFont(editorFont);
+
+    // Syntax highlighting
+    cppLexer->setColor(QColor("#66d9ef"), QsciLexerCPP::Keyword); // Blue for keywords
+    cppLexer->setColor(QColor("#a6e22e"), QsciLexerCPP::DoubleQuotedString); // Green for strings
+    cppLexer->setColor(QColor("#75715e"), QsciLexerCPP::Comment); // Grey for comments
+    cppLexer->setColor(QColor("#f92672"), QsciLexerCPP::Number); // Pink for numbers
+    cppLexer->setPaper(QColor("#272822")); // Dark background
+    cppLexer->setColor(QColor("#f8f8f2")); // Light text
+
+    scintilla->setLexer(cppLexer);
+
+    // Enable syntax-related features
+    scintilla->setAutoIndent(true);
+    scintilla->setIndentationGuides(true);
+    scintilla->setIndentationWidth(4);
+    scintilla->setBraceMatching(QsciScintilla::SloppyBraceMatch);
+
+    // Highlight the current line
+    scintilla->setCaretLineVisible(true);
+    scintilla->setCaretLineBackgroundColor(QColor("#3e3d32")); // Light grey
+
+    // Line number margin
+    scintilla->setMarginType(0, QsciScintilla::NumberMargin);
+    scintilla->setMarginsBackgroundColor(QColor("#1e1e1e")); // Dark grey
+    scintilla->setMarginsForegroundColor(QColor("#75715e")); // Subtle grey
+    scintilla->setMarginWidth(0, QString::number(scintilla->lines()).length() * 10 + 20);
+
+    // Auto-completion
+    scintilla->setAutoCompletionSource(QsciScintilla::AcsAll);
+    scintilla->setAutoCompletionThreshold(2);
+    scintilla->setAutoCompletionCaseSensitivity(false);
+
+    // Set APIs for auto-completion
+    QsciAPIs *apis = new QsciAPIs(cppLexer);
+    apis->add("int");
+    apis->add("float");
+    apis->add("double");
+    apis->add("return");
+    apis->add("<iostream>");
+    apis->add("<vector>");
+    apis->add("<string>");
+    apis->prepare();
+    cppLexer->setAPIs(apis);
+
+    // Add QsciScintilla widget to layout
     int row, col, rowSpan, colSpan;
     ui->gridLayout->getItemPosition(ui->gridLayout->indexOf(ui->codeEditor), &row, &col, &rowSpan, &colSpan);
     ui->gridLayout->removeWidget(ui->codeEditor);
     delete ui->codeEditor;
     ui->codeEditor = nullptr;
-
     ui->gridLayout->addWidget(scintilla, row, col, rowSpan, colSpan);
 
-    // Add the QsciScintilla widget at the same position
-    ui->gridLayout->addWidget(scintilla, row, col, rowSpan, colSpan);
-
-    // Load problem details
-     QSqlQuery query(db.getDatabase()); // Now db is passed correctly
-    query.prepare("SELECT Title, Description, Input_Format, Output_Format, Constraints, Example "
-                  "FROM Problems WHERE ID = ?");
+    // Load problem details from the database
+    QSqlQuery query(db.getDatabase());
+    query.prepare("SELECT Title, Description, Input_Format, Output_Format, Constraints, Example FROM Problems WHERE ID = ?");
     query.addBindValue(problemId);
 
-    if (query.exec() && query.next())
-    {
+    if (query.exec() && query.next()) {
         ui->titleLabel->setText(query.value("Title").toString());
         ui->descriptionText->setPlainText(query.value("Description").toString());
         ui->inputFormatText->setPlainText(query.value("Input_Format").toString());
         ui->outputFormatText->setPlainText(query.value("Output_Format").toString());
         ui->constraintsText->setPlainText(query.value("Constraints").toString());
         ui->exampleText->setPlainText(query.value("Example").toString());
-
-    }
-    else
-    {
+    } else {
         QMessageBox::warning(this, "Error", "Could not load problem details: " + query.lastError().text());
     }
 
+    // Signal-slot for the Run button
     connect(ui->runButton, &QPushButton::clicked, this, &solveproblemwindow::runCode);
 
-
+    // Dynamic margin adjustment for line numbers
+    connect(scintilla, &QsciScintilla::linesChanged, this, [this]() {
+        int lineCount = scintilla->lines();
+        scintilla->setMarginWidth(0, QString::number(lineCount).length() * 10 + 20);
+    });
 }
 
 
