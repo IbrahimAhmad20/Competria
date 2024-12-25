@@ -16,9 +16,7 @@ public:
     bool validateUser(const QString& username, const QString& password);
     bool validateAdmin(const QString& adminUsername, const QString& adminPassword);
    // bool createProblem(const QString& title, const QString& description);
-   bool createProblem(const QString &title, const QString &description, const QString &inputFormat,
-                  const QString &outputFormat, const QString &constraints, const QString &example,
-                       const QList<int> &topicIDs) ;
+    bool createProblem(QString title, QString description, QString inputFormat, QString outputFormat, QString constraints, QString example, QList<int> topicIDs) ;
     QSqlQuery getAllProblems();
    // bool updateProblem(int id, const QString& title, const QString& description);
     bool updateProblem(int id, const QString &title, const QString &description, const QString &inputFormat,
@@ -26,6 +24,8 @@ public:
     bool deleteProblem(int id);
     QSqlQuery getAllUsers();
     bool updateUser(int id, const QString &email, const QString &username, const QString &password);
+    int getTopicIDByName(const QString &topicName);
+
     bool deleteUser(int id) ;
     QString hashPassword(const QString &password);
 

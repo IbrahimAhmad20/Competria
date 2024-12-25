@@ -189,46 +189,66 @@ bool Database::validateAdmin(const QString &adminUsername, const QString &adminP
 
     return true;
 } */
-bool Database::createProblem(const QString &title, const QString &description, const QString &inputFormat,
-                             const QString &outputFormat, const QString &constraints, const QString &example,
-                             const QList<int> &topicIDs)
+bool Database::createProblem(QString title, QString description, QString inputFormat, QString outputFormat, QString constraints, QString example, QList<int> topicIDs)
 {
-    if (!db.isOpen()) return false;
-
-    QSqlQuery query(db);
-    query.prepare("INSERT INTO Problems (Title, Description, Input_Format, Output_Format, Constraints, Example) "
-                  "VALUES (?, ?, ?, ?, ?, ?)");
-    query.addBindValue(title);
-    query.addBindValue(description);
-    query.addBindValue(inputFormat);
-    query.addBindValue(outputFormat);
-    query.addBindValue(constraints);
-    query.addBindValue(example);
-
-    if (!query.exec())
-    {
-        qDebug() << "Create problem failed:" << query.lastError().text();
+    if (!db.isOpen()) {
+        qDebug() << "Database is not open.";
         return false;
     }
 
-    int problemID = query.lastInsertId().toInt();
+    QSqlQuery query(db);
 
-    // Add entries to ProblemTopics
-    for (int topicID : topicIDs)
-    {
-        QSqlQuery topicQuery(db);
-        topicQuery.prepare("INSERT INTO ProblemTopics (Problem_ID, Topic_ID) VALUES (?, ?)");
-        topicQuery.addBindValue(problemID);
-        topicQuery.addBindValue(topicID);
+    // Step 1: Insert the problem into the Problems table
+    query.prepare("INSERT INTO Problems (Title, Description, Input_Format, Output_Format, Constraints, Example) "
+                  "VALUES (:title, :description, :inputFormat, :outputFormat, :constraints, :example)");
+    query.bindValue(":title", title);
+    query.bindValue(":description", description);
+    query.bindValue(":inputFormat", inputFormat);
+    query.bindValue(":outputFormat", outputFormat);
+    query.bindValue(":constraints", constraints);
+    query.bindValue(":example", example);
 
-        if (!topicQuery.exec())
-        {
-            qDebug() << "Insert into ProblemTopics failed:" << topicQuery.lastError().text();
-            return false;
+    if (!query.exec()) {
+        qDebug() << "Failed to insert problem:" << query.lastError().text();
+        return false;
+    }
+
+    int problemID = query.lastInsertId().toInt(); // Retrieve the newly inserted Problem ID
+
+    // Step 2: Link the problem to multiple topic IDs
+    for (int topicID : topicIDs) {
+        QSqlQuery linkQuery(db);
+        linkQuery.prepare("INSERT INTO ProblemTopics (Problem_ID, Topic_ID) VALUES (:problemID, :topicID)");
+        linkQuery.bindValue(":problemID", problemID);
+        linkQuery.bindValue(":topicID", topicID);
+
+        if (!linkQuery.exec()) {
+            qDebug() << "Failed to link problem with topic ID:" << topicID << "-" << linkQuery.lastError().text();
+            return false; // Handle failure (optional: continue instead of returning)
         }
     }
 
+    qDebug() << "Problem created successfully and linked to topics.";
     return true;
+}
+
+int Database::getTopicIDByName(const QString &topicName)
+{
+    if (!db.isOpen()) {
+        qDebug() << "Database is not open.";
+        return -1;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT ID FROM Topics WHERE Topic_Name = :name");
+    query.bindValue(":name", topicName);
+
+    if (query.exec() && query.next()) {
+        return query.value(0).toInt(); // Return the ID if found
+    } else {
+        qDebug() << "Topic not found:" << topicName << query.lastError().text();
+        return -1; // Return -1 if not found
+    }
 }
 
 /*QSqlQuery Database::getAllProblems()
@@ -280,20 +300,16 @@ QSqlQuery Database::getAllProblems()
     }
 
     QSqlQuery query(db);
-    query.prepare("SELECT Problems.*, GROUP_CONCAT(Topics.Topic_Name) AS Topics "
-                  "FROM Problems "
-                  "LEFT JOIN ProblemTopics ON Problems.ID = ProblemTopics.Problem_ID "
-                  "LEFT JOIN Topics ON ProblemTopics.Topic_ID = Topics.ID "
-                  "GROUP BY Problems.ID");
+    query.prepare("SELECT ID, Title, Description, Input_Format, Output_Format, Constraints, Example FROM Problems");
 
     if (!query.exec()) {
         qDebug() << "Failed to fetch problems:" << query.lastError().text();
+        return QSqlQuery(); // Return an empty query if execution fails
     }
 
-    // Clear previous query results after execution
-    query.finish();
-    return query;
+    return query; // Return the executed query
 }
+
 
 
 /*bool Database::updateProblem(int id, const QString &title, const QString &description)

@@ -175,8 +175,16 @@ void problemManager::populateTable()
     }
 }
 
-void problemManager::on_createButton_clicked()
+/*void problemManager::on_createButton_clicked()
 {
+    QString topicsInput = QInputDialog::getText(this, "Create Problem", "Enter Topic IDs (comma-separated):");
+    QList<int> topicIDs;
+    if (!topicsInput.isEmpty()) {
+        for (const QString &id : topicsInput.split(",")) {
+            topicIDs.append(id.trimmed().toInt());
+        }
+    }
+
     QString title = QInputDialog::getText(this, "Create Problem", "Enter Problem Title:");
     if (title.isEmpty()) return;
 
@@ -187,16 +195,62 @@ void problemManager::on_createButton_clicked()
     QString example = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Example:");
 
     Database db;
-    if (db.connect() && db.createProblem(title, description, inputFormat, outputFormat, constraints, example, {})) // Empty topic IDs for now
+    if (db.connect() && db.createProblem(title, description, inputFormat, outputFormat, constraints, example, topicIDs))
     {
         QMessageBox::information(this, "Success", "Problem created successfully!");
         populateTable();
     }
+
     else
     {
         QMessageBox::warning(this, "Error", "Failed to create problem.");
     }
+}*/
+void problemManager::on_createButton_clicked()
+{
+    // Step 1: Get topic names from the user
+    QString topicsInput = QInputDialog::getText(this, "Create Problem", "Enter Topic Names (comma-separated):");
+    QList<int> topicIDs;
+
+    if (!topicsInput.isEmpty()) {
+        QStringList topicNames = topicsInput.split(",", Qt::SkipEmptyParts);
+        Database db;
+
+        if (db.connect()) {
+            for (const QString &topicName : topicNames) {
+                int topicID = db.getTopicIDByName(topicName.trimmed());
+                if (topicID != -1) {
+                    topicIDs.append(topicID);
+                } else {
+                    QMessageBox::warning(this, "Warning", "Topic not found: " + topicName);
+                }
+            }
+        } else {
+            QMessageBox::warning(this, "Error", "Failed to connect to the database.");
+            return;
+        }
+    }
+
+    // Step 2: Get other problem details
+    QString title = QInputDialog::getText(this, "Create Problem", "Enter Problem Title:");
+    if (title.isEmpty()) return;
+
+    QString description = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Problem Description:");
+    QString inputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Input Format:");
+    QString outputFormat = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Output Format:");
+    QString constraints = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Constraints:");
+    QString example = QInputDialog::getMultiLineText(this, "Create Problem", "Enter Example:");
+
+    // Step 3: Insert problem into the database
+    Database db;
+    if (db.connect() && db.createProblem(title, description, inputFormat, outputFormat, constraints, example, topicIDs)) {
+        QMessageBox::information(this, "Success", "Problem created successfully!");
+        populateTable();
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to create problem.");
+    }
 }
+
 
 void problemManager::on_deleteButton_clicked()
 {
