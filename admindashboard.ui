@@ -14,7 +14,7 @@
    <string>Admin Dashboard</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image : url(&quot;:/new/prefix1/src/percut_generated.jpg&quot;) ;</string>
+   <string notr="true"/>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
@@ -30,7 +30,7 @@
         <string notr="true">background : transparent ;</string>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:700;&quot;&gt;Admin Dashboard&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:24pt; font-weight:700; color:#0b192c;&quot;&gt;Admin Dashboard&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -42,66 +42,75 @@
        <item>
         <widget class="QPushButton" name="problemManagerButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>10</horstretch>
            <verstretch>10</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>247</width>
+           <height>61</height>
+          </size>
+         </property>
          <property name="styleSheet">
-          <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
-    border-radius: 15px; /* Rounded corners */
-    font-size: 16px; /* Text size */
-    padding: 8px 16px; /* Padding inside the button */
- background-color: #17A398; /* Teal background for Submit */
-    color: #FFFFFF; /* White text for Submit */
-    border: none; /* Remove border */</string>
+          <string notr="true">
+    border-radius: 35px; /* Rounded corners */
+background-image: url(:/new/prefix1/src/ManageProblems2.png);
+</string>
          </property>
          <property name="text">
-          <string>Manage Problems</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="submissionMonitorButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-           <horstretch>10</horstretch>
-           <verstretch>10</verstretch>
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>247</width>
+           <height>61</height>
+          </size>
+         </property>
          <property name="styleSheet">
-          <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
-    border-radius: 15px; /* Rounded corners */
-    font-size: 16px; /* Text size */
-    padding: 8px 16px; /* Padding inside the button */
- background-color: #17A398; /* Teal background for Submit */
-    color: #FFFFFF; /* White text for Submit */
-    border: none; /* Remove border */</string>
+          <string notr="true">
+    border-radius: 35px; /* Rounded corners */
+background-image: (:/new/prefix1/src/MonitorSubmissions.png);
+</string>
          </property>
          <property name="text">
-          <string>Monitor Submissions</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="userManagerButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-           <horstretch>10</horstretch>
-           <verstretch>10</verstretch>
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>247</width>
+           <height>61</height>
+          </size>
+         </property>
          <property name="styleSheet">
-          <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
-    border-radius: 15px; /* Rounded corners */
-    font-size: 16px; /* Text size */
-    padding: 8px 16px; /* Padding inside the button */
- background-color: #17A398; /* Teal background for Submit */
-    color: #FFFFFF; /* White text for Submit */
-    border: none; /* Remove border */</string>
+          <string notr="true">
+    border-radius: 35px; /* Rounded corners */
+background-image: url(:/new/prefix1/src/ManageUsers.png);
+</string>
          </property>
          <property name="text">
-          <string>Manage Users</string>
+          <string/>
          </property>
         </widget>
        </item>

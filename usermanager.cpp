@@ -9,7 +9,49 @@ usermanager::usermanager(QWidget *parent)
     ui(new Ui::usermanager)
 {
     ui->setupUi(this);
-
+    this->setStyleSheet(
+        "QDialog {"
+        "    background-color: #2b2b2b;"
+        "    color: white;"
+        "    border-radius: 10px;"
+        "    padding: 10px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #9a76b1;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: #6a4a75;"
+        "}"
+        "QTableWidget {"
+        "    background-color: #3c3f41;"
+        "    alternate-background-color: #4a4a4a;"
+        "    gridline-color: #5a5a5a;"
+        "    color: white;"
+        "    border: 1px solid #5c5c5c;"
+        "    font-size: 14px;"
+        "}"
+        "QHeaderView::section {"
+        "    background-color: #4a4a4a;"
+        "    color: white;"
+        "    padding: 4px;"
+        "    border: none;"
+        "    font-weight: bold;"
+        "    text-align: left;"
+        "}"
+        "QTableWidget::item:selected {"
+        "    background-color: #7b5c8e;"
+        "    color: white;"
+        "}"
+        );
+    ui->usertable->verticalHeader()->setDefaultSectionSize(40); // Adjust height
+    ui->usertable->horizontalHeader()->setStretchLastSection(true); // Stretch last column
+    for (int i = 0; i < ui->usertable->rowCount(); ++i) {
+        for (int j = 0; j < ui->usertable->columnCount(); ++j) {
+            if (ui->usertable->item(i, j)) {
+                ui->usertable->item(i, j)->setTextAlignment(Qt::AlignCenter);
+            }
+        }
+    }
 
     if (!db.connect())
     {

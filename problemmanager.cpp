@@ -9,6 +9,40 @@ problemManager::problemManager(QWidget *parent)
     : QDialog(parent), ui(new Ui::problemManager)
 {
     ui->setupUi(this);
+    this->setStyleSheet(
+        "QDialog {"
+        "    background-color: #2b2b2b;"
+        "    color: white;"
+        "    border-radius: 10px;"
+        "    padding: 10px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #9a76b1;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: #6a4a75;"
+        "}"
+        "QTableWidget {"
+        "    background-color: #3c3f41;"
+        "    alternate-background-color: #4a4a4a;"
+        "    gridline-color: #5a5a5a;"
+        "    color: white;"
+        "    border: 1px solid #5c5c5c;"
+        "    font-size: 14px;"
+        "}"
+        "QHeaderView::section {"
+        "    background-color: #4a4a4a;"
+        "    color: white;"
+        "    padding: 4px;"
+        "    border: none;"
+        "    font-weight: bold;"
+        "    text-align: left;"
+        "}"
+        "QTableWidget::item:selected {"
+        "    background-color: #7b5c8e;"
+        "    color: white;"
+        "}"
+        );
     populateTable();
 }
 

@@ -13,7 +13,13 @@ admindashboard::admindashboard(QWidget *parent) :
 {
 
     ui->setupUi(this);
-
+    this->setStyleSheet(
+        "QDialog {"
+        "    background-color: rgb(121, 122, 86);"
+        "    color: white;"
+        "    border-radius: 10px;"
+        "    padding: 10px;"
+        "}");
 }
 
 admindashboard::~admindashboard()
@@ -36,6 +42,12 @@ void admindashboard::on_problemManagerButton_clicked()
 {
     problemManager problemManagerDialog(this);
     problemManagerDialog.exec();
+
+}
+
+
+void admindashboard::on_submissionMonitorButton_clicked()
+{
 
 }
 

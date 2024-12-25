@@ -18,7 +18,7 @@ userdashboard::userdashboard(QWidget *parent) :
     setModal(true);
     setFixedSize(size());
 
-    // Apply styling to the dialog
+    // Apply styles to the dialog and table widget
     this->setStyleSheet(
         "QDialog {"
         "    background-color: #2b2b2b;"
@@ -53,6 +53,14 @@ userdashboard::userdashboard(QWidget *parent) :
         "    color: white;"
         "}"
         );
+
+    // Ensure table resizes vertically to fit content
+    ui->problemTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->problemTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // Ensure the last column stretches
+    ui->problemTable->horizontalHeader()->setStretchLastSection(true);
+
     // Load problems into the table view
     loadProblems();
 

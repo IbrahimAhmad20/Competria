@@ -37,6 +37,7 @@ int SubmissionManager::saveSubmission(int userId, int problemId, const QString &
 }
 
 
-int SubmissionManager::getLastSubmissionId() const {
+int SubmissionManager::getLastSubmissionId() const
+{
     return lastSubmissionId;
 }

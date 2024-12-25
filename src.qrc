@@ -24,5 +24,15 @@
         <file>src/20647Button.png</file>
         <file>src/SolveChallengeButton.png</file>
         <file>src/206472.png</file>
+        <file>vvvv</file>
+        <file>src/Group 4.png</file>
+        <file>src/User.png</file>
+        <file>src/UserW.png</file>
+        <file>src/Group 5.png</file>
+        <file>src/Edit.png</file>
+        <file>src/ManageProblems.png</file>
+        <file>src/MonitorSubmissions.png</file>
+        <file>src/ManageUsers.png</file>
+        <file>src/ManageProblems2.png</file>
     </qresource>
 </RCC>

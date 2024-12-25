@@ -38,7 +38,7 @@
    <item row="10" column="2" rowspan="2">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QPlainTextEdit" name="inputText">
+      <widget class="QPlainTextEdit" name="customInputTextEdit">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -344,6 +344,13 @@ QPushButton#runButton {
        <width>400</width>
        <height>16777215</height>
       </size>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QCheckBox" name="customInputCheckBox">
+     <property name="text">
+      <string>Custom Input</string>
      </property>
     </widget>
    </item>

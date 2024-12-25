@@ -259,7 +259,7 @@ void solveproblemwindow::on_submitButton_clicked()
     }
 }
 
-void solveproblemwindow::runCode()
+/*void solveproblemwindow::runCode()
 {
     QString userCode = scintilla->text();
 
@@ -350,7 +350,131 @@ void solveproblemwindow::runCode()
 
     ui->plainTextEdit_4->setPlainText(resultSummary);
 
+}*/
+void solveproblemwindow::runCode()
+{
+    QString userCode = scintilla->text();
+
+    // Save user code to a file
+    QFile codeFile("user_code.cpp");
+    if (!codeFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error", "Failed to save code to file.");
+        return;
+    }
+    QTextStream out(&codeFile);
+    out << userCode;
+    codeFile.close();
+
+    // Compile the code
+    process->start("g++", QStringList() << "-o" << "user_code" << "user_code.cpp");
+    process->waitForFinished();
+
+    if (process->exitCode() != 0) {
+        ui->plainTextEdit_4->setPlainText("Compilation Error:\n" + process->readAllStandardError());
+        return;
+    }
+
+    if (ui->customInputCheckBox->isChecked()) {
+        // If custom input checkbox is checked
+        QString customInput = ui->customInputTextEdit->toPlainText(); // Assuming a QPlainTextEdit for custom input
+        QElapsedTimer timer;
+        timer.start();
+
+        // Run the compiled executable with custom input
+        QProcess testProcess;
+        testProcess.setProgram("./user_code");
+        testProcess.start();
+
+        if (!testProcess.waitForStarted()) {
+            ui->plainTextEdit_4->setPlainText("Failed to start the program.");
+            return;
+        }
+
+        testProcess.write(customInput.toUtf8());
+        testProcess.closeWriteChannel();
+
+        if (!testProcess.waitForFinished()) {
+            ui->plainTextEdit_4->setPlainText("Program execution timed out.");
+            return;
+        }
+
+        // Measure runtime
+        double runtime = timer.elapsed() / 1000.0; // Time in seconds
+
+        QString userOutput = testProcess.readAllStandardOutput().trimmed();
+        QString resultSummary = QString("Output:\n%1\n\nRuntime: %2 sec").arg(userOutput).arg(runtime);
+        ui->plainTextEdit_4->setPlainText(resultSummary);
+
+    } else {
+        // Fetch test cases for the problem
+        QSqlQuery testCaseQuery = db.getTestCases(problemId);
+
+        int totalCases = 0;
+        int passedCases = 0;
+        double score = 0.0;
+        QString status = "Pending";
+        double totalRuntime = 0.0;
+        double peakMemoryUsage = 0.0;
+
+        while (testCaseQuery.next()) {
+            QString testCaseInput = testCaseQuery.value("Input").toString();
+            QString expectedOutput = testCaseQuery.value("ExpectedOutput").toString().trimmed();
+            double weight = testCaseQuery.value("Weight").toDouble();
+
+            QElapsedTimer timer;
+            timer.start();
+
+            // Run the compiled executable with the test case input
+            QProcess testProcess;
+            testProcess.setProgram("./user_code");
+            testProcess.start();
+
+            if (!testProcess.waitForStarted()) {
+                ui->plainTextEdit_4->setPlainText("Failed to start the program.");
+                return;
+            }
+
+            testProcess.write(testCaseInput.toUtf8());
+            testProcess.closeWriteChannel();
+
+            if (!testProcess.waitForFinished()) {
+                ui->plainTextEdit_4->setPlainText("Program execution timed out.");
+                return;
+            }
+
+            // Measure runtime
+            double runtime = timer.elapsed() / 1000.0; // Time in seconds
+            totalRuntime += runtime;
+
+            // Measure memory usage (placeholder, platform-specific memory profiling tools can replace this)
+            peakMemoryUsage = std::max(peakMemoryUsage, static_cast<double>(testProcess.processId()));
+
+            QString userOutput = testProcess.readAllStandardOutput().trimmed();
+
+            // Compare output
+            if (userOutput == expectedOutput) {
+                passedCases++;
+                score += weight;
+            }
+
+            totalCases++;
+        }
+
+        // Determine status
+        status = (passedCases == totalCases) ? "Accepted" : "Partial";
+
+        // Display results in the UI
+        QString resultSummary = QString("Total Cases: %1\nPassed Cases: %2\nScore: %3\nRuntime: %4 sec\nMemory Used: %5 KB")
+                                    .arg(totalCases)
+                                    .arg(passedCases)
+                                    .arg(score)
+                                    .arg(totalRuntime)
+                                    .arg(peakMemoryUsage);
+
+        ui->plainTextEdit_4->setPlainText(resultSummary);
+    }
 }
+
 void solveproblemwindow::saveResults(int submissionId)
 {
     QString userCode = scintilla->text();
