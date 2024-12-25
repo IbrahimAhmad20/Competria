@@ -15,7 +15,19 @@ solveproblemwindow::solveproblemwindow(Database &db, int problemId, QWidget *par
     scintilla(new QsciScintilla(this))
 {
     ui->setupUi(this);
-
+    this->setStyleSheet(
+        "QDialog {"
+        "    background-color: #2b2b2b;"
+        "    color: white;"
+        "    border-radius: 10px;"
+        "    padding: 10px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #9a76b1;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: #6a4a75;"
+        "}");
     // Set up the QsciScintilla instance
     QsciLexerCPP *cppLexer = new QsciLexerCPP(this);
     QFont editorFont("Fira Code", 12); // Use a modern font with ligatures
