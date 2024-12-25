@@ -21,7 +21,6 @@ void on_problemManagerButton_clicked();
 
     void on_userManagerButton_clicked();
 
-void on_submissionMonitorButton_clicked();
 
 private:
     Ui::admindashboard *ui;

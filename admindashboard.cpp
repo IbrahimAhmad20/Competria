@@ -46,8 +46,5 @@ void admindashboard::on_problemManagerButton_clicked()
 }
 
 
-void admindashboard::on_submissionMonitorButton_clicked()
-{
 
-}
 
