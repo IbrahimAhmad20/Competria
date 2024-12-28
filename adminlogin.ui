@@ -25,6 +25,9 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QLabel" name="label">
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:26pt; font-weight:700;&quot;&gt;Login&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
@@ -54,7 +57,13 @@ font: 700 14pt &quot;Script MT Bold&quot;;
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="username_lineEdit"/>
+       <widget class="QLineEdit" name="username_lineEdit">
+        <property name="styleSheet">
+         <string notr="true">
+font: 700 14pt &quot;Segoe UI&quot;;
+background-color: rgb(34, 38, 41);</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -71,6 +80,10 @@ font: 700 14pt &quot;Script MT Bold&quot;;
       </item>
       <item>
        <widget class="QLineEdit" name="password_lineEdit">
+        <property name="styleSheet">
+         <string notr="true">font: 12pt &quot;Segoe UI&quot;;
+background-color: rgb(34, 38, 41);</string>
+        </property>
         <property name="echoMode">
          <enum>QLineEdit::EchoMode::Password</enum>
         </property>
@@ -85,6 +98,8 @@ font: 700 14pt &quot;Script MT Bold&quot;;
       </property>
       <property name="styleSheet">
        <string notr="true">font: 700 11pt &quot;Segoe Print&quot;;
+color: rgb(0, 0, 0);
+background-color: rgb(211, 217, 212);
 </string>
       </property>
       <property name="text">

@@ -14,9 +14,9 @@
    <string>Competria </string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normalon>src/login_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normalon>
-   </iconset>
+   <iconset resource="src.qrc">
+    <normaloff>:/new/prefix1/src/icons8-c-50.png</normaloff>
+    <normalon>:/new/prefix1/src/icons8-c-50.png</normalon>:/new/prefix1/src/icons8-c-50.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="layoutWidget">
@@ -123,6 +123,8 @@ rgb(15, 87, 194);</string>
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="src.qrc"/>
+ </resources>
  <connections/>
 </ui>

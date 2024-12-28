@@ -11,7 +11,12 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Admin Dashboard</string>
+   <string/>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="src.qrc">
+    <normaloff>:/new/prefix1/src/UserW.png</normaloff>
+    <normalon>:/new/prefix1/src/UserW.png</normalon>:/new/prefix1/src/UserW.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -120,6 +125,8 @@ background-image: url(:/new/prefix1/src/ManageUsers.png);
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="src.qrc"/>
+ </resources>
  <connections/>
 </ui>

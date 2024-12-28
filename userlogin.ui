@@ -11,7 +11,15 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string/>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="src.qrc">
+    <normaloff>:/new/prefix1/src/icons8-c-50.png</normaloff>
+    <normalon>:/new/prefix1/src/icons8-c-50.png</normalon>:/new/prefix1/src/icons8-c-50.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -39,7 +47,8 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 600 12pt &quot;Segoe UI Semibold&quot;;</string>
+         <string notr="true">font: 600 12pt &quot;Segoe UI Semibold&quot;;
+color: rgb(255, 255, 255);</string>
         </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:26pt; font-weight:700;&quot;&gt;Login&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -75,7 +84,8 @@ font: 700 14pt &quot;Script MT Bold&quot;;
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 12pt &quot;Segoe UI&quot;;</string>
+           <string notr="true">font: 12pt &quot;Segoe UI&quot;;
+background-color: rgb(34, 38, 41);</string>
           </property>
           <property name="text">
            <string/>
@@ -107,7 +117,8 @@ font: 700 14pt &quot;Script MT Bold&quot;;
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 12pt &quot;Segoe UI&quot;;</string>
+           <string notr="true">font: 12pt &quot;Segoe UI&quot;;
+background-color: rgb(34, 38, 41);</string>
           </property>
           <property name="echoMode">
            <enum>QLineEdit::EchoMode::Password</enum>
@@ -130,6 +141,8 @@ font: 700 14pt &quot;Script MT Bold&quot;;
        <widget class="QPushButton" name="login_button">
         <property name="styleSheet">
          <string notr="true">font: 700 11pt &quot;Segoe Print&quot;;
+color: rgb(0, 0, 0);
+background-color: rgb(211, 217, 212);
 </string>
         </property>
         <property name="text">
@@ -141,6 +154,8 @@ font: 700 14pt &quot;Script MT Bold&quot;;
        <widget class="QPushButton" name="signup_button">
         <property name="styleSheet">
          <string notr="true">font: 700 11pt &quot;Segoe Print&quot;;
+color: rgb(0, 0, 0);
+background-color: rgb(211, 217, 212);
 </string>
         </property>
         <property name="text">
@@ -153,6 +168,8 @@ font: 700 14pt &quot;Script MT Bold&quot;;
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="src.qrc"/>
+ </resources>
  <connections/>
 </ui>

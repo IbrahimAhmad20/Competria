@@ -13,6 +13,20 @@ adminlogin::adminlogin(QWidget *parent)
     ui->usernamelabel->setPixmap(pix.scaled(40,40)) ;
     QPixmap pic2(":/new/prefix1/src/password_28dp_E5EFC1_FILL0_wght400_GRAD0_opsz24.png");
     ui->passwordlabel->setPixmap(pic2.scaled(40,40));
+    this->setStyleSheet(
+        "QDialog {"
+        "     background-color: rgb(17, 45, 50);"
+        "    color: white;"
+        "    border-radius: 10px;"
+        "    padding: 10px;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: #9a76b1;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: #6a4a75;"
+        "}");
+
 }
 
 adminlogin::~adminlogin()

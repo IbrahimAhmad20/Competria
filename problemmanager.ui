@@ -81,22 +81,26 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QPushButton" name="createButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>45</height>
+             </size>
+            </property>
             <property name="styleSheet">
-             <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
+             <string notr="true">
     border-radius: 15px; /* Rounded corners */
-    font-size: 16px; /* Text size */
-    padding: 8px 16px; /* Padding inside the button */
- background-color: #17A398; /* Teal background for Submit */
-    color: #FFFFFF; /* White text for Submit */
-    border: none; /* Remove border */</string>
+
+background-image: url(:/new/prefix1/src/Add Button.png);</string>
             </property>
             <property name="text">
-             <string>  Create</string>
-            </property>
-            <property name="icon">
-             <iconset resource="src.qrc">
-              <normaloff>:/new/prefix1/add_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normaloff>
-              <normalon>:/new/prefix1/add_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normalon>:/new/prefix1/add_24dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</iconset>
+             <string/>
             </property>
             <property name="iconSize">
              <size>
@@ -107,28 +111,86 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="deleteButton">
-            <property name="font">
-             <font>
-              <pointsize>-1</pointsize>
-             </font>
+           <widget class="QPushButton" name="editButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>45</height>
+             </size>
             </property>
             <property name="styleSheet">
-             <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
+             <string notr="true">
     border-radius: 15px; /* Rounded corners */
-    font-size: 16px; /* Text size */
-    padding: 8px 16px; /* Padding inside the button */
- background-color: #17A398; /* Teal background for Submit */
-    color: #FFFFFF; /* White text for Submit */
-    border: none; /* Remove border */</string>
+
+background-image: url(:/new/prefix1/src/Edit Butotn.png);</string>
             </property>
             <property name="text">
-             <string notr="true">  Delete</string>
+             <string/>
             </property>
-            <property name="icon">
-             <iconset resource="src.qrc">
-              <normaloff>:/new/prefix1/src/delete_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normaloff>
-              <normalon>src/delete_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normalon>:/new/prefix1/src/delete_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</iconset>
+            <property name="iconSize">
+             <size>
+              <width>25</width>
+              <height>25</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addTestCaseButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">
+    border-radius: 15px; /* Rounded corners */
+
+background-image: url(:/new/prefix1/src/Test Case.png);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="deleteButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="font">
+             <font/>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">
+    border-radius: 15px; /* Rounded corners */
+  
+background-image: url(:/new/prefix1/src/Delete Button.png);</string>
+            </property>
+            <property name="text">
+             <string notr="true"/>
             </property>
             <property name="iconSize">
              <size>
@@ -144,40 +206,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="addTestCaseButton">
-            <property name="text">
-             <string>Add Test Case</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="editButton">
-            <property name="styleSheet">
-             <string notr="true"> border: 2px solid #CCCCCC; /* Default border color */
-    border-radius: 15px; /* Rounded corners */
-    font-size: 16px; /* Text size */
-    padding: 8px 16px; /* Padding inside the button */
- background-color: #17A398; /* Teal background for Submit */
-    color: #FFFFFF; /* White text for Submit */
-    border: none; /* Remove border */</string>
-            </property>
-            <property name="text">
-             <string>     Edit</string>
-            </property>
-            <property name="icon">
-             <iconset resource="src.qrc">
-              <normaloff>:/new/prefix1/src/edit_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normaloff>
-              <normalon>src/edit_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</normalon>:/new/prefix1/src/edit_28dp_E8EAED_FILL0_wght400_GRAD0_opsz24.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>25</width>
-              <height>25</height>
-             </size>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -187,8 +215,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="src.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
